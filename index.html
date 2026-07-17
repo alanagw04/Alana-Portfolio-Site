@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alana Wilkes — Cyber Law & Security Portfolio</title>
+  <meta name="description" content="Portfolio of Alana Wilkes, Computer Science major & Psychology minor at Prairie View A&M University. Focus on cybersecurity law, accessibility, and digital inclusion.">
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & VARIABLES
+       ========================================================================== */
+    :root {
+      --bg-paper: #E3DEC7;
+      --bg-card: #EEEADA;
+      --text-primary: #1B231D;
+      --text-muted: #586055;
+      --color-emerald: #2F6B4F;
+      --color-gold: #8A6A2E;
+      --color-gold-light: #A3803D;
+      --border-color: #C0BCA4;
+      
+      --font-serif: 'Source Serif 4', Georgia, serif;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: light;
+    }
+
+    body {
+      background-color: var(--bg-paper);
+      /* Fine ruled-paper texture: 24px grid height */
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 23px,
+        rgba(47, 107, 79, 0.04) 23px,
+        rgba(47, 107, 79, 0.04) 24px
+      );
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    /* Top Letterhead Gradient Strip */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, var(--color-emerald), var(--color-gold));
+      z-index: 1000;
+    }
+
+    /* Focus States */
+    :focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 2px;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 20px;
+      background: var(--color-emerald);
+      color: #ffffff;
+      padding: 10px 20px;
+      z-index: 1001;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .skip-link:focus {
+      top: 10px;
+    }
+
+    /* Typography Utilities */
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    a {
+      color: var(--color-emerald);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    a:hover {
+      color: var(--color-gold);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--color-emerald);
+      border-radius: 0; /* Sharp corners */
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--color-emerald);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background-color: #24523C;
+      border-color: #24523C;
+      color: #ffffff;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--color-emerald);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover {
+      border-color: var(--color-emerald);
+      background-color: rgba(47, 107, 79, 0.05);
+      color: var(--color-emerald);
+    }
+
+    /* ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background-color: rgba(227, 222, 199, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 999;
+      padding-top: 5px; /* Account for the gradient strip */
+    }
+
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-link {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+    }
+    .logo-link:hover {
+      opacity: 0.9;
+    }
+    .logo-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+    }
+    .logo-subtitle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-emerald);
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-tab-link {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 0.5rem 0.25rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .nav-tab-link:hover {
+      color: var(--text-primary);
+    }
+    .nav-tab-link.active {
+      color: var(--color-emerald);
+      border-bottom-color: var(--color-gold);
+    }
+
+    .header-cta {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+    }
+
+    /* ==========================================================================
+       LAYOUT SECTIONS
+       ========================================================================== */
+    .section-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .section-wrapper:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      margin-bottom: 3rem;
+      position: relative;
+      padding-bottom: 0.75rem;
+    }
+    .section-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background-color: var(--color-gold);
+    }
+
+    /* HERO SECTION */
+    .hero-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+    .hero-eyebrow {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--color-gold);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-eyebrow::after {
+      content: "";
+      height: 1px;
+      width: 40px;
+      background-color: var(--color-gold);
+    }
+    .hero-headline {
+      font-size: 3.5rem;
+      max-width: 900px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .hero-subhead {
+      font-size: 1.25rem;
+      max-width: 700px;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    /* Stats Table */
+    .stats-table-container {
+      margin-top: 3.5rem;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.5rem 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-gold);
+      margin-bottom: 0.25rem;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .stat-val {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ABOUT ME SECTION */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-portrait-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-top: 4px solid var(--color-emerald);
+      padding: 1.25rem;
+      max-width: 280px;
+    }
+    .about-portrait-placeholder {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background-color: var(--bg-paper);
+      border: 1px dashed var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .about-portrait-placeholder svg {
+      width: 48px;
+      height: 48px;
+      fill: var(--color-emerald);
+      margin-bottom: 0.75rem;
+      opacity: 0.7;
+    }
+    .about-portrait-caption {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .about-bio {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .about-bio-text {
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    .about-bio-text strong {
+      color: var(--color-emerald);
+    }
+
+    /* Facts Grid */
+    .facts-title {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem 3rem;
+    }
+    .fact-item {
+      display: flex;
+      gap: 1rem;
+    }
+    .fact-marker {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--color-gold);
+    }
+    .fact-content strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .fact-content span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* PROJECTS SECTION */
+    .projects-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .project-row {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+    .project-row:hover {
+      border-color: var(--color-emerald);
+    }
+
+    .project-header-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 2rem;
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      font-family: inherit;
+    }
+
+    .project-num {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-gold);
+    }
+
+    .project-title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .project-title-line {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .project-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+    .project-badge-featured {
+      font-size: 0.7rem;
+      background-color: var(--color-emerald);
+      color: #ffffff;
+      padding: 0.15rem 0.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .project-meta-line {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .project-icon-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-color);
+      color: var(--color-emerald);
+      transition: all 0.2s ease;
+    }
+    .project-row:hover .project-icon-indicator {
+      border-color: var(--color-emerald);
+      background-color: var(--color-emerald);
+      color: #ffffff;
+    }
+    .project-row.expanded .project-icon-indicator {
+      transform: rotate(180deg);
+    }
+
+    /* Expandable Body */
+    .project-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      border-top: 1px solid transparent;
+    }
+    .project-row.expanded .project-body {
+      max-height: 1000px; /* Arbitrary large height to accommodate content */
+      border-top-color: var(--border-color);
+    }
+
+    .project-content-inner {
+      padding: 2.5rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 3rem;
+    }
+
+    .project-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .project-details p {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .tag-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 0.25rem 0.6rem;
+      background-color: var(--bg-paper);
+    }
+
+    .project-sidebar {
+      background-color: var(--bg-paper);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      height: fit-content;
+    }
+    .sidebar-block-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-gold);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.25rem;
+    }
+    .sidebar-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+    .sidebar-list li {
+      position: relative;
+      padding-left: 1rem;
+    }
+    .sidebar-list li::before {
+      content: "•";
+      color: var(--color-emerald);
+      position: absolute;
+      left: 0;
+    }
+
+    .try-app-btn {
+      margin-top: 1rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* MORE INFO (CONTACT) SECTION */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .contact-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .contact-item-row {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+    .contact-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--color-emerald);
+      flex-shrink: 0;
+    }
+    .contact-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+    .contact-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .contact-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.15rem;
+    }
+    .contact-val {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Highlighted CTA Panel */
+    .cta-panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 6px solid var(--color-emerald);
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .cta-panel-title {
+      font-size: 1.75rem;
+      font-family: var(--font-serif);
+      margin-bottom: 0.5rem;
+    }
+    .cta-panel-text {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .cta-panel .btn {
+      width: fit-content;
+    }
+
+    /* FOOTER */
+    .site-footer {
+      background-color: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      padding: 3rem 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .footer-copyright {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================================
+       RESPONSIVE MEDIA QUERIES
+       ========================================================================== */
+    @media (max-width: 900px) {
+      .hero-headline {
+        font-size: 2.75rem;
+      }
+      .about-grid, .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .about-portrait-card {
+        margin: 0 auto;
+      }
+      .project-content-inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 1.5rem;
+      }
+      .project-header-btn {
+        padding: 1.5rem;
+        gap: 1rem;
+      }
+      .project-title {
+        font-size: 1.25rem;
+      }
+      .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .nav-menu {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-headline {
+        font-size: 2.25rem;
+      }
+      .nav-menu {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .nav-tabs {
+        width: 100%;
+        justify-content: center;
+      }
+      .header-cta {
+        width: 100%;
+      }
+      .section-wrapper {
+        padding: 3rem 1.5rem;
+      }
+      .footer-container {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Keyboard Accessibility Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Sticky Header Nav -->
+  <header class="sticky-header" aria-label="Header banner">
+    <div class="nav-container">
+      <a href="#" class="logo-link" aria-label="Alana Wilkes homepage">
+        <span class="logo-title">ALANA WILKES</span>
+        <span class="logo-subtitle">Cyber Law &amp; Security</span>
+      </a>
+      <div class="nav-menu">
+        <nav aria-label="Primary Navigation">
+          <ul class="nav-tabs">
+            <li><a href="#about" class="nav-tab-link">About Me</a></li>
+            <li><a href="#projects" class="nav-tab-link">Projects</a></li>
+            <li><a href="#more-info" class="nav-tab-link">More Info</a></li>
+          </ul>
+        </nav>
+        <a href="#more-info" class="btn btn-primary header-cta">Get in Touch</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    
+    <!-- Hero Section -->
+    <section class="section-wrapper" id="hero" aria-labelledby="hero-title">
+      <div class="hero-container">
+        <div class="hero-eyebrow" id="hero-title">Cyber Law &amp; Security</div>
+        <h1 class="hero-headline">
+          Bridging the gap between defense protocols and human agency.
+        </h1>
+        <p class="hero-subhead">
+          Computer Science major and Psychology minor at Prairie View A&amp;M University. 
+          Advocating for digital inclusion, accessible cybersecurity policy, and consumer protection.
+        </p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary">View Projects</a>
+          <a href="#about" class="btn btn-secondary">About Me</a>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-table-container">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-num">I. MAJOR</span>
+            <span class="stat-label">Academic Program</span>
+            <span class="stat-val">Computer Science</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">II. MINOR</span>
+            <span class="stat-label">Cognitive Subfield</span>
+            <span class="stat-val">Psychology</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">III. STATUS</span>
+            <span class="stat-label">Opportunity Focus</span>
+            <span class="stat-val">Open to Internships</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num">IV. GRADUATION</span>
+            <span class="stat-label">Expected Date</span>
+            <span class="stat-val">Spring 2027</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section class="section-wrapper" id="about" aria-labelledby="about-title">
+      <h2 class="section-title" id="about-title">About Me</h2>
+      <div class="about-grid">
+        
+        <!-- Portrait Box -->
+        <div class="about-portrait-card">
+          <div class="about-portrait-placeholder">
+            <!-- Icon illustrating security and psychology -->
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span style="font-weight:600; font-size:0.95rem; color:var(--color-emerald)">Alana Wilkes</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem">PVAMU Student</span>
+          </div>
+          <div class="about-portrait-caption">
+            "Security systems fail when they ignore the human elements of trust, friction, and capability."
+          </div>
+        </div>
+
+        <!-- Bio Content -->
+        <div class="about-bio">
+          <p class="about-bio-text">
+            I study at the intersection of technology and human behavior. As a Computer Science student with a Psychology minor at <strong>Prairie View A&amp;M University</strong>, I examine how security parameters can be configured to protect populations that are often left behind by standard industry practices.
+          </p>
+          <p class="about-bio-text">
+            My career goals center on <strong>cyberlaw, digital compliance, and privacy policy</strong>. I intend to pursue a Master's degree in Cybersecurity Law and Procedure at Texas A&amp;M to analyze how legal frameworks govern digital access, consumer protection, and cybersecurity compliance.
+          </p>
+          <p class="about-bio-text">
+            Too often, digital safety standards assume perfect motor skills, high cognitive bandwidth, and endless memory. When design choices lock out older adults, individuals with cognitive differences, or busy caregivers, it is a failure of both accessibility and security. I seek to build tools that enforce solid security guidelines without compromising human dignity or usability.
+          </p>
+
+          <!-- Quick Facts -->
+          <h3 class="facts-title">Focus &amp; Coursework</h3>
+          <div class="facts-grid">
+            <div class="fact-item">
+              <span class="fact-marker">01.</span>
+              <div class="fact-content">
+                <strong>Current Coursework</strong>
+                <span>OOP with Inheritance, Recursion &amp; Sorting (Python COMP 2315); ANOVA, Regression &amp; Statistical Inference.</span>
+              </div>
+            </div>
+            <div class="fact-item">
+              <span class="fact-marker">02.</span>
+              <div class="fact-content">
+                <strong>Focus Areas</strong>
+                <span>Digital Accessibility (WCAG 2.2), Cyberlaw, Human Factors in Security, Usable Authentication.</span>
+              </div>
+            </div>
+            <div class="fact-item">
+              <span class="fact-marker">03.</span>
+              <div class="fact-content">
+                <strong>Technical Proficiencies</strong>
+                <span>Python, HTML, CSS, JavaScript, SQL, R (Statistical analysis).</span>
+              </div>
+            </div>
+            <div class="fact-item">
+              <span class="fact-marker">04.</span>
+              <div class="fact-content">
+                <strong>Looking For</strong>
+                <span>Summer 2027 internships in Cybersecurity Policy, Trust &amp; Safety engineering, or UX Research.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section-wrapper" id="projects" aria-labelledby="projects-title">
+      <h2 class="section-title" id="projects-title">Selected Cases</h2>
+      <div class="projects-container">
+
+        <!-- PROJECT 01 (Featured: Secure but Simple) -->
+        <div class="project-row" id="project-01">
+          <button class="project-header-btn" aria-expanded="false" aria-controls="project-01-body" onclick="toggleProject('project-01')">
+            <span class="project-num">Case 01</span>
+            <span class="project-title-area">
+              <span class="project-title-line">
+                <span class="project-title">"Secure but Simple" — Accessible Authentication Advisor</span>
+                <span class="project-badge-featured">Featured App</span>
+              </span>
+              <span class="project-meta-line">
+                <span>UX Research &amp; Digital Inclusion</span>
+                <span>•</span>
+                <span>Year: 2026</span>
+              </span>
+            </span>
+            <span class="project-icon-indicator" aria-hidden="true">
+              <!-- Chevron Icon -->
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 1l5 5 5-5" />
+              </svg>
+            </span>
+          </button>
+          <div class="project-body" id="project-01-body" role="region" aria-label="Secure but Simple project details">
+            <div class="project-content-inner">
+              <div class="project-details">
+                <p>
+                  <strong>The Problem:</strong> Authentication systems operate on high-friction assumptions—expecting users to read micro-fonts, recall intricate secrets, parse obscure symbols, and coordinate multi-device tasks. This introduces severe barriers for older adults, caregivers, and users with cognitive or physical disabilities.
+                </p>
+                <p>
+                  <strong>How it works:</strong> "Secure but Simple" is a client-side prototype that screens users through an accessible Needs Assessment quiz, scores six distinct authentication modes, adjusts outcomes via a custom priority slider, generates a step-by-step security action plan, and offers interactive CAPTCHA and scam-checking tools.
+                </p>
+                <div class="project-tags">
+                  <span class="tag-pill">Cyber Law</span>
+                  <span class="tag-pill">Accessibility</span>
+                  <span class="tag-pill">UX Research</span>
+                  <span class="tag-pill">Product Design</span>
+                  <span class="tag-pill">Digital Inclusion</span>
+                </div>
+              </div>
+              <div class="project-sidebar">
+                <div>
+                  <h4 class="sidebar-block-title">Key Parameters</h4>
+                  <ul class="sidebar-list">
+                    <li>Zero-data server dependency</li>
+                    <li>WCAG 2.2 AAA color options</li>
+                    <li>Regex &amp; OCR text parsing</li>
+                    <li>Pure HTML/CSS/JS architecture</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="sidebar-block-title">Cyberlaw Link</h4>
+                  <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.4">
+                    Examines legal mandates surrounding public accessibility requirements (Section 508, European Accessibility Act) and consumer protection from phishing.
+                  </p>
+                </div>
+                <a href="projects/secure-but-simple.html" class="btn btn-primary try-app-btn">Try the Live Prototype &rarr;</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 02 -->
+        <div class="project-row" id="project-02">
+          <button class="project-header-btn" aria-expanded="false" aria-controls="project-02-body" onclick="toggleProject('project-02')">
+            <span class="project-num">Case 02</span>
+            <span class="project-title-area">
+              <span class="project-title-line">
+                <span class="project-title">Automated Privacy Policy Auditing Engine</span>
+              </span>
+              <span class="project-meta-line">
+                <span>Python Scripting &amp; Compliance Analysis</span>
+                <span>•</span>
+                <span>Year: 2026</span>
+              </span>
+            </span>
+            <span class="project-icon-indicator" aria-hidden="true">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 1l5 5 5-5" />
+              </svg>
+            </span>
+          </button>
+          <div class="project-body" id="project-02-body" role="region" aria-label="Automated Privacy Policy Auditing Engine details">
+            <div class="project-content-inner">
+              <div class="project-details">
+                <p>
+                  <strong>The Project:</strong> A Python utility designed to parse terms of service and privacy agreements. It highlights potentially non-compliant data collection clauses using structural heuristics and keywords aligned with GDPR, CCPA, and COPPA frameworks.
+                </p>
+                <p>
+                  By analyzing text density, passive voice constructs, and vague verbs ("may share", "third-party partners"), the script evaluates policies for cognitive readability score (Flesch-Kincaid) alongside legal clarity.
+                </p>
+                <div class="project-tags">
+                  <span class="tag-pill">Cyber Law</span>
+                  <span class="tag-pill">Python</span>
+                  <span class="tag-pill">Privacy Heuristics</span>
+                  <span class="tag-pill">Heuristic Parsing</span>
+                </div>
+              </div>
+              <div class="project-sidebar">
+                <h4 class="sidebar-block-title">Key Parameters</h4>
+                <ul class="sidebar-list">
+                  <li>CLI &amp; Report outputs</li>
+                  <li>Flesch-Kincaid parser</li>
+                  <li>Regulation keyword map</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 03 -->
+        <div class="project-row" id="project-03">
+          <button class="project-header-btn" aria-expanded="false" aria-controls="project-03-body" onclick="toggleProject('project-03')">
+            <span class="project-num">Case 03</span>
+            <span class="project-title-area">
+              <span class="project-title-line">
+                <span class="project-title">Inclusive MFA Cognitive Barriers Study</span>
+              </span>
+              <span class="project-meta-line">
+                <span>Psychological Research &amp; Interface Design</span>
+                <span>•</span>
+                <span>Year: 2025</span>
+              </span>
+            </span>
+            <span class="project-icon-indicator" aria-hidden="true">
+              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 1l5 5 5-5" />
+              </svg>
+            </span>
+          </button>
+          <div class="project-body" id="project-03-body" role="region" aria-label="Inclusive MFA Cognitive Barriers Study details">
+            <div class="project-content-inner">
+              <div class="project-details">
+                <p>
+                  <strong>The Project:</strong> A psychological usability assessment investigating the impact of temporal limits and structural complexity on user anxiety during multi-factor authentication (MFA) setup tasks.
+                </p>
+                <p>
+                  The study gathered response latency, error frequency, and self-reported anxiety indexes (using Likert-scale surveys) from distinct age brackets. Results indicated that strict time-based verification increases login failure rates by 42% for older adults.
+                </p>
+                <div class="project-tags">
+                  <span class="tag-pill">Digital Inclusion</span>
+                  <span class="tag-pill">Accessibility</span>
+                  <span class="tag-pill">Statistical Analysis</span>
+                  <span class="tag-pill">UX Research</span>
+                </div>
+              </div>
+              <div class="project-sidebar">
+                <h4 class="sidebar-block-title">Key Parameters</h4>
+                <ul class="sidebar-list">
+                  <li>30+ user participant surveys</li>
+                  <li>ANOVA significance validation</li>
+                  <li>Interface layout iterations</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- More Info Section -->
+    <section class="section-wrapper" id="more-info" aria-labelledby="more-title">
+      <h2 class="section-title" id="more-title">Directories &amp; Contact</h2>
+      <div class="contact-grid">
+        
+        <!-- Contact list -->
+        <div class="contact-info-list">
+          <div class="contact-item-row">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </div>
+            <div class="contact-text">
+              <span class="contact-label">Electronic Mail</span>
+              <a href="mailto:a.wilkes@student.pvamu.edu" class="contact-val">a.wilkes@student.pvamu.edu</a>
+            </div>
+          </div>
+
+          <div class="contact-item-row">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+              </svg>
+            </div>
+            <div class="contact-text">
+              <span class="contact-label">Professional Registry</span>
+              <a href="https://linkedin.com/in/alana-wilkes" target="_blank" rel="noopener noreferrer" class="contact-val">linkedin.com/in/alana-wilkes</a>
+            </div>
+          </div>
+
+          <div class="contact-item-row">
+            <div class="contact-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
+              </svg>
+            </div>
+            <div class="contact-text">
+              <span class="contact-label">Source Control Repository</span>
+              <a href="https://github.com/alana-wilkes" target="_blank" rel="noopener noreferrer" class="contact-val">github.com/alana-wilkes</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="cta-panel">
+          <h3 class="cta-panel-title">Let's discuss.</h3>
+          <p class="cta-panel-text">
+            If you are interested in discussing accessible security design, legal compliance, or academic opportunities, I am open to conversation.
+          </p>
+          <a href="mailto:a.wilkes@student.pvamu.edu" class="btn btn-primary">Send Inquiry</a>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <span class="footer-copyright">ALANA WILKES © 2026</span>
+      <span>Prairie View A&amp;M University • Computer Science &amp; Psychology</span>
+    </div>
+  </footer>
+
+  <!-- Accordion & Scroll Highlighting Scripts -->
+  <script>
+    /* ==========================================================================
+       ACCORDION CONTROLS (PROJECT DETAILS)
+       ========================================================================== */
+    function toggleProject(id) {
+      const row = document.getElementById(id);
+      const btn = row.querySelector('.project-header-btn');
+      const body = row.querySelector('.project-body');
+      
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      
+      // Close all rows first
+      document.querySelectorAll('.project-row').forEach(otherRow => {
+        if (otherRow.id !== id) {
+          otherRow.classList.remove('expanded');
+          otherRow.querySelector('.project-header-btn').setAttribute('aria-expanded', 'false');
+          otherRow.querySelector('.project-body').style.maxHeight = null;
+        }
+      });
+      
+      if (isExpanded) {
+        row.classList.remove('expanded');
+        btn.setAttribute('aria-expanded', 'false');
+        body.style.maxHeight = null;
+      } else {
+        row.classList.add('expanded');
+        btn.setAttribute('aria-expanded', 'true');
+        // Calculate and set explicit max-height for CSS transition
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    }
+
+    /* ==========================================================================
+       SCROLL SECTION TRACKING (INTERSECTION OBSERVER)
+       ========================================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.nav-tab-link');
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px', // Focus window centered vertically
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const currentId = entry.target.getAttribute('id');
+            
+            navLinks.forEach(link => {
+              const href = link.getAttribute('href').substring(1);
+              if (href === currentId) {
+                link.classList.add('active');
+              } else {
+                link.classList.remove('active');
+              }
+            });
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => {
+        observer.observe(section);
+      });
+    });
+  </script>
+</body>
+</html>

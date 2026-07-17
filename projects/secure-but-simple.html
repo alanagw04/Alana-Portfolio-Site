@@ -1,0 +1,3447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure but Simple — Accessible Account Security Advisor</title>
+  <meta name="description" content="An accessible, interactive guide to help older adults and caregivers choose, set up, and manage secure credentials.">
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+
+  <!-- Tesseract.js for OCR screenshot scan (requires internet) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & THEME DECLARATIONS
+       ========================================================================== */
+    :root {
+      --bg-paper: #E3DEC7;
+      --bg-card: #EEEADA;
+      --text-primary: #1B231D;
+      --text-muted: #586055;
+      --color-emerald: #2F6B4F;
+      --color-gold: #8A6A2E;
+      --border-color: #C0BCA4;
+      
+      --font-serif: 'Source Serif 4', Georgia, serif;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Accessibility Theme: High Contrast */
+    html.high-contrast {
+      --bg-paper: #FFFFFF;
+      --bg-card: #FFFFFF;
+      --text-primary: #000000;
+      --text-muted: #000000;
+      --color-emerald: #000000;
+      --color-gold: #000000;
+      --border-color: #000000;
+    }
+
+    /* Accessibility Theme: Larger Text */
+    html.larger-text {
+      font-size: 1.25rem; /* Scales up layout elements dynamically */
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-paper);
+      /* Fine ruled-paper texture (disabled in high contrast) */
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 23px,
+        rgba(47, 107, 79, 0.04) 23px,
+        rgba(47, 107, 79, 0.04) 24px
+      );
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    html.high-contrast body {
+      background-image: none !important;
+    }
+
+    /* Top Letterhead Gradient Strip */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to right, var(--color-emerald), var(--color-gold));
+      z-index: 1000;
+    }
+
+    /* Focus States */
+    :focus-visible {
+      outline: 3px solid var(--color-gold);
+      outline-offset: 3px;
+    }
+
+    /* Skip to content link */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 20px;
+      background: var(--color-emerald);
+      color: #ffffff;
+      padding: 10px 20px;
+      z-index: 1001;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .skip-link:focus {
+      top: 10px;
+    }
+
+    /* ARIA Live Region */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    a {
+      color: var(--color-emerald);
+      text-decoration: underline;
+    }
+    a:hover {
+      color: var(--color-gold);
+    }
+
+    /* ==========================================================================
+       HEADER & ACCESSIBILITY CONTROLS
+       ========================================================================== */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background-color: rgba(227, 222, 199, 0.98);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 999;
+      padding-top: 5px;
+    }
+    html.high-contrast .sticky-header {
+      background-color: #ffffff;
+      border-bottom: 2px solid #000000;
+    }
+
+    .header-top-bar {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 2rem 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .logo-title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .logo-subtitle {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-emerald);
+    }
+
+    /* Accessibility Bar */
+    .accessibility-bar {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .acc-btn {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 0;
+      min-height: 40px;
+      transition: all 0.2s ease;
+    }
+    .acc-btn:hover {
+      border-color: var(--color-emerald);
+    }
+    .acc-btn.active {
+      background-color: var(--color-emerald);
+      color: #ffffff;
+      border-color: var(--color-emerald);
+    }
+    html.high-contrast .acc-btn {
+      border: 2px solid #000000;
+    }
+    html.high-contrast .acc-btn.active {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    /* Tab-based Navigation */
+    .header-nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      overflow-x: auto;
+    }
+    .nav-tabs {
+      display: flex;
+      list-style-type: none;
+      border-bottom: 1px solid var(--border-color);
+    }
+    html.high-contrast .nav-tabs {
+      border-bottom: 2px solid #000000;
+    }
+    .nav-tab-item {
+      flex-shrink: 0;
+    }
+    .nav-tab-link {
+      display: block;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+    }
+    .nav-tab-link:hover {
+      color: var(--text-primary);
+    }
+    .nav-tab-link.active {
+      color: var(--color-emerald);
+      border-bottom-color: var(--color-gold);
+    }
+    html.high-contrast .nav-tab-link.active {
+      color: #000000;
+      border-bottom: 4px solid #000000;
+    }
+
+    /* ==========================================================================
+       LAYOUT SECTIONS
+       ========================================================================== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .screen-section {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .screen-section.active {
+      display: block;
+    }
+
+    /* Reduced Motion Override */
+    @media (prefers-reduced-motion: reduce) {
+      .screen-section {
+        animation: none !important;
+      }
+      .quiz-track {
+        transition: none !important;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .screen-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+    html.high-contrast .screen-header {
+      border-bottom: 2px solid #000000;
+    }
+    .screen-title {
+      font-size: 2.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .screen-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    /* Cards */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 0;
+    }
+    html.high-contrast .card {
+      border: 2px solid #000000;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem 1.75rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid var(--color-emerald);
+      border-radius: 0;
+      cursor: pointer;
+      min-height: 48px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    html.high-contrast .btn {
+      border: 2px solid #000000 !important;
+    }
+
+    .btn-primary {
+      background-color: var(--color-emerald);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background-color: #24523C;
+      border-color: #24523C;
+    }
+    html.high-contrast .btn-primary {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--color-emerald);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover {
+      border-color: var(--color-emerald);
+      background-color: rgba(47, 107, 79, 0.05);
+    }
+    html.high-contrast .btn-secondary {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+
+    .btn-danger {
+      background-color: #8C2D19;
+      color: #ffffff;
+      border-color: #8C2D19;
+    }
+    .btn-danger:hover {
+      background-color: #702414;
+    }
+    html.high-contrast .btn-danger {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border-color: #000000 !important;
+    }
+
+    .btn-block {
+      display: flex;
+      width: 100%;
+    }
+
+    /* Print Controls */
+    .print-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1.5rem;
+    }
+    .btn-print {
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      min-height: 40px;
+    }
+
+    /* ==========================================================================
+       SCREEN 1: LANDING
+       ========================================================================== */
+    .landing-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .landing-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .landing-headline {
+      font-size: 2.75rem;
+      font-family: var(--font-serif);
+    }
+    .landing-actions {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .landing-sidebar {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-top: 4px solid var(--color-emerald);
+      padding: 2rem;
+    }
+    .landing-sidebar-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .landing-sidebar-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .landing-sidebar-list li {
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    .landing-sidebar-list li::before {
+      content: "✓";
+      color: var(--color-emerald);
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       SCREEN 2: PATHWAY SELECTION
+       ========================================================================== */
+    .pathway-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .pathway-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .pathway-card:hover {
+      border-color: var(--color-emerald);
+      background-color: rgba(238, 234, 218, 0.7);
+    }
+    .pathway-card-title {
+      font-size: 1.5rem;
+      font-family: var(--font-serif);
+      color: var(--color-emerald);
+    }
+    .pathway-card-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      flex-grow: 1;
+    }
+
+    /* ==========================================================================
+       SCREEN 3: NEEDS ASSESSMENT (QUIZ)
+       ========================================================================== */
+    .quiz-outer-container {
+      max-width: 750px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-card);
+    }
+    html.high-contrast .quiz-outer-container {
+      border: 2px solid #000000;
+    }
+
+    /* Progress bar */
+    .quiz-progress-container {
+      background-color: var(--bg-paper);
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    html.high-contrast .quiz-progress-container {
+      border-bottom: 2px solid #000000;
+    }
+    .quiz-progress-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .quiz-progress-track {
+      width: 150px;
+      height: 8px;
+      background-color: rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .quiz-progress-bar {
+      height: 100%;
+      background-color: var(--color-emerald);
+      width: 20%;
+      transition: width 0.3s ease;
+    }
+    html.high-contrast .quiz-progress-bar {
+      background-color: #000000;
+    }
+
+    /* Quiz slider */
+    .quiz-slider-window {
+      overflow: hidden;
+      position: relative;
+    }
+    .quiz-track {
+      display: flex;
+      width: 500%;
+      transition: transform 0.3s ease;
+    }
+    .quiz-slide {
+      width: 20%;
+      padding: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .quiz-fieldset {
+      border: none;
+    }
+    .quiz-legend {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      display: block;
+      width: 100%;
+    }
+    .quiz-hint {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .quiz-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Radio targets min 48px */
+    .quiz-choice-label {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: var(--bg-paper);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      min-height: 52px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .quiz-choice-label:hover {
+      border-color: var(--color-emerald);
+      background-color: rgba(227, 222, 199, 0.5);
+    }
+    .quiz-choice-input {
+      margin-right: 1.25rem;
+      width: 20px;
+      height: 20px;
+      accent-color: var(--color-emerald);
+    }
+
+    .quiz-navigation-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+    html.high-contrast .quiz-navigation-buttons {
+      border-top: 2px solid #000000;
+    }
+
+    .quiz-error-box {
+      background-color: #F8D7DA;
+      border: 1px solid #F5C2C7;
+      color: #842029;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: none;
+      font-weight: 600;
+    }
+    html.high-contrast .quiz-error-box {
+      background-color: #ffffff;
+      border: 3px solid #000000;
+      color: #000000;
+    }
+
+    /* ==========================================================================
+       SCREEN 4: RECOMMENDATIONS
+       ========================================================================== */
+    .recommender-intro {
+      margin-bottom: 2.5rem;
+    }
+    
+    /* Live Slider */
+    .slider-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .slider-control {
+      width: 100%;
+      height: 12px;
+      accent-color: var(--color-emerald);
+      cursor: pointer;
+      background: var(--border-color);
+      border: none;
+    }
+    .slider-control::-webkit-slider-runnable-track {
+      height: 12px;
+    }
+
+    /* Cards grid */
+    .rec-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 3.5rem;
+    }
+    
+    .rec-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+      position: relative;
+    }
+    .rec-card-featured {
+      border-left: 6px solid var(--color-emerald);
+    }
+    html.high-contrast .rec-card {
+      border: 2px solid #000000;
+      border-left: 6px solid #000000;
+    }
+
+    .rec-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: var(--color-emerald);
+      color: #ffffff;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    html.high-contrast .rec-badge {
+      background-color: #000000;
+    }
+
+    .rec-header {
+      margin-bottom: 1rem;
+    }
+    .rec-card-title {
+      font-size: 1.8rem;
+      font-family: var(--font-serif);
+      color: var(--color-emerald);
+    }
+    html.high-contrast .rec-card-title {
+      color: #000000;
+    }
+
+    .rec-desc {
+      font-size: 1.05rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .rec-metrics {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 0;
+    }
+    .rec-metric-item {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .rec-metric-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .rec-metric-val {
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .sec-high { color: #1B5E20; }
+    .sec-medium { color: #E65100; }
+    .sec-standard { color: #8A6A2E; }
+    .ease-veryeasy { color: #1B5E20; }
+    .ease-easy { color: #2E7D32; }
+    .ease-moderate { color: #E65100; }
+
+    .rec-why-fit {
+      background-color: var(--bg-paper);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    .rec-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    /* Action Checklist */
+    .checklist-container-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+    }
+    .checklist-title {
+      font-size: 1.75rem;
+      font-family: var(--font-serif);
+      margin-bottom: 0.75rem;
+    }
+    
+    .checklist-progress-summary {
+      background-color: var(--bg-paper);
+      padding: 1.25rem;
+      border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+    .checklist-progress-bar-track {
+      width: 100%;
+      height: 10px;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin-top: 0.5rem;
+    }
+    .checklist-progress-bar-fill {
+      height: 100%;
+      background-color: var(--color-emerald);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    html.high-contrast .checklist-progress-bar-fill {
+      background-color: #000000;
+    }
+
+    .checklist-method-section {
+      margin-bottom: 2rem;
+    }
+    .checklist-method-section:last-of-type {
+      margin-bottom: 0;
+    }
+    .checklist-method-title {
+      font-size: 1.25rem;
+      font-family: var(--font-serif);
+      margin-bottom: 1.25rem;
+      color: var(--color-emerald);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+    html.high-contrast .checklist-method-title {
+      color: #000000;
+    }
+
+    .checklist-steps-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .checklist-step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .checklist-checkbox {
+      width: 24px;
+      height: 24px;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+      accent-color: var(--color-emerald);
+      cursor: pointer;
+    }
+    .checklist-label {
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       SCREEN 5: COMPARE METHODS
+       ========================================================================== */
+    .filter-chips {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .chip {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.5rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 0;
+      transition: all 0.2s ease;
+      min-height: 40px;
+    }
+    .chip:hover {
+      border-color: var(--color-emerald);
+    }
+    .chip.active {
+      background-color: var(--color-emerald);
+      color: #ffffff;
+      border-color: var(--color-emerald);
+    }
+    html.high-contrast .chip.active {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    /* Comparison Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      text-align: left;
+    }
+    html.high-contrast .compare-table {
+      border: 2px solid #000000;
+    }
+    .compare-table th, .compare-table td {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    html.high-contrast .compare-table th, html.high-contrast .compare-table td {
+      border-bottom: 2px solid #000000;
+      border-right: 2px solid #000000;
+    }
+    .compare-table th {
+      background-color: rgba(47, 107, 79, 0.05);
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .compare-table tr:hover {
+      background-color: rgba(227, 222, 199, 0.3);
+    }
+
+    /* ==========================================================================
+       SCREEN 6: MY ACCOUNTS
+       ========================================================================== */
+    .accounts-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .form-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .form-input {
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-paper);
+      color: var(--text-primary);
+      border-radius: 0;
+      min-height: 48px;
+    }
+    html.high-contrast .form-input {
+      border: 2px solid #000000;
+      background-color: #ffffff;
+    }
+
+    /* Password Input Wrapper for Show/Hide */
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+    }
+    .password-input-wrapper .form-input {
+      width: 100%;
+      padding-right: 3.5rem;
+    }
+    .password-toggle-btn {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      background: none;
+      border: none;
+      border-left: 1px solid var(--border-color);
+      padding: 0 1rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-emerald);
+    }
+    html.high-contrast .password-toggle-btn {
+      border-left: 2px solid #000000;
+      color: #000000;
+    }
+
+    /* Password Strength Meter */
+    .strength-meter-container {
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .strength-bar-track {
+      height: 6px;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin-bottom: 0.25rem;
+    }
+    .strength-bar-fill {
+      height: 100%;
+      width: 0%;
+      transition: all 0.3s ease;
+    }
+    .strength-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .warning-banner {
+      background-color: #FFF3CD;
+      border: 1px solid #FFE69C;
+      color: #664D03;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    html.high-contrast .warning-banner {
+      background-color: #ffffff;
+      border: 2px dashed #000000;
+      color: #000000;
+    }
+
+    /* Saved accounts grid */
+    .saved-accounts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .account-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .account-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+    .account-card-name {
+      font-size: 1.35rem;
+      font-family: var(--font-serif);
+    }
+    .method-badge {
+      background-color: var(--color-emerald);
+      color: #ffffff;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    html.high-contrast .method-badge {
+      background-color: #000000;
+    }
+    
+    .account-card-body {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 1rem;
+      font-size: 0.95rem;
+    }
+    .account-card-field {
+      display: flex;
+      flex-direction: column;
+    }
+    .field-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field-val {
+      font-weight: 600;
+    }
+    .account-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* ==========================================================================
+       SCREEN 7: LEARN THE BASICS
+       ========================================================================== */
+    .learn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+    .example-box {
+      background-color: var(--bg-paper);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .example-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .ex-bad {
+      border-left: 4px solid #8C2D19;
+      padding-left: 1rem;
+    }
+    .ex-good {
+      border-left: 4px solid var(--color-emerald);
+      padding-left: 1rem;
+    }
+    html.high-contrast .ex-bad {
+      border-left: 4px solid #000000;
+    }
+    html.high-contrast .ex-good {
+      border-left: 4px solid #000000;
+    }
+
+    /* ==========================================================================
+       SCREEN 8: AVOID SCAMS
+       ========================================================================== */
+    .scams-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .scam-item {
+      margin-bottom: 2rem;
+    }
+    .scam-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-emerald);
+    }
+    html.high-contrast .scam-title {
+      color: #000000;
+    }
+
+    /* Scam Checker Form */
+    .scam-checker-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 2.5rem;
+    }
+    .textarea-scam {
+      width: 100%;
+      height: 150px;
+      padding: 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-paper);
+      color: var(--text-primary);
+      resize: vertical;
+      border-radius: 0;
+      margin-bottom: 1rem;
+    }
+    html.high-contrast .textarea-scam {
+      border: 2px solid #000000;
+      background-color: #ffffff;
+    }
+
+    /* Styled File Upload */
+    .file-upload-wrapper {
+      margin-bottom: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--border-color);
+      padding: 2rem;
+      cursor: pointer;
+      text-align: center;
+      min-height: 120px;
+      transition: all 0.2s ease;
+    }
+    .file-upload-label:hover {
+      border-color: var(--color-emerald);
+      background-color: rgba(47, 107, 79, 0.05);
+    }
+    .file-upload-input {
+      display: none;
+    }
+    .ocr-loader {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      color: var(--color-emerald);
+    }
+
+    .preview-thumbnail {
+      max-width: 150px;
+      max-height: 150px;
+      margin-top: 1rem;
+      border: 1px solid var(--border-color);
+      display: none;
+    }
+
+    /* Scam Scanner Verdicts */
+    .verdict-box {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+      display: none;
+    }
+    .verdict-danger {
+      background-color: #F8D7DA;
+      border-color: #F5C2C7;
+      color: #842029;
+      border-left: 6px solid #8C2D19;
+    }
+    .verdict-warning {
+      background-color: #FFF3CD;
+      border-color: #FFE69C;
+      color: #664D03;
+      border-left: 6px solid #8A6A2E;
+    }
+    .verdict-safe {
+      background-color: #D1E7DD;
+      border-color: #BADBCC;
+      color: #0F5132;
+      border-left: 6px solid var(--color-emerald);
+    }
+    html.high-contrast .verdict-box {
+      background-color: #ffffff;
+      border: 3px solid #000000;
+      color: #000000;
+    }
+    .verdict-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ==========================================================================
+       SCREEN 9: PRACTICE VERIFICATION (CAPTCHA)
+       ========================================================================== */
+    .captcha-outer {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .captcha-prompt-box {
+      background-color: var(--color-emerald);
+      color: #ffffff;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    html.high-contrast .captcha-prompt-box {
+      background-color: #000000;
+    }
+    .captcha-prompt-title {
+      font-size: 1.4rem;
+      font-family: var(--font-serif);
+      margin-bottom: 0.25rem;
+    }
+    .captcha-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .captcha-tile {
+      aspect-ratio: 1 / 1;
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .captcha-tile:hover {
+      border-color: var(--color-emerald);
+    }
+    .captcha-tile.selected {
+      border-color: var(--color-gold);
+      background-color: rgba(138, 106, 46, 0.15);
+    }
+    .captcha-tile.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 5px;
+      right: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-gold);
+    }
+    html.high-contrast .captcha-tile.selected {
+      border: 4px solid #000000;
+      background-color: #000000;
+    }
+    html.high-contrast .captcha-tile.selected svg {
+      fill: #ffffff;
+    }
+    html.high-contrast .captcha-tile.selected::after {
+      color: #ffffff;
+    }
+
+    .captcha-tile svg {
+      width: 70%;
+      height: 70%;
+      fill: var(--color-emerald);
+    }
+    html.high-contrast .captcha-tile svg {
+      fill: #000000;
+    }
+
+    .captcha-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .captcha-feedback {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ==========================================================================
+       SCREEN 10: RECOVERY HELP
+       ========================================================================== */
+    .recovery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .recovery-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-top: 4px solid var(--color-gold);
+      padding: 2rem;
+    }
+    html.high-contrast .recovery-card {
+      border: 2px solid #000000;
+      border-top: 6px solid #000000;
+    }
+    .recovery-card-title {
+      font-size: 1.35rem;
+      margin-bottom: 1.5rem;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+    .recovery-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .recovery-step {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.95rem;
+    }
+    .recovery-step-num {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--color-gold);
+    }
+
+    /* ==========================================================================
+       FOOTER & UTILITIES
+       ========================================================================== */
+    .site-footer {
+      background-color: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      padding: 3rem 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 4rem;
+    }
+    html.high-contrast .site-footer {
+      border-top: 2px solid #000000;
+    }
+    .footer-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .footer-copyright {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        font-size: 12pt;
+      }
+      .sticky-header, .accessibility-bar, .nav-tabs, .btn, button, input, select, textarea, footer, .no-print, .print-bar, .file-upload-wrapper {
+        display: none !important;
+      }
+      main, .screen-section {
+        display: block !important;
+      }
+      .screen-section:not(.active) {
+        display: none !important;
+      }
+      .screen-section.active {
+        visibility: visible !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        border: none !important;
+        background: none !important;
+      }
+      .screen-section.active * {
+        visibility: visible !important;
+      }
+      .card, .rec-card, .checklist-container-card {
+        border: 1px solid #000000 !important;
+        background: #ffffff !important;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Responsive queries */
+    @media (max-width: 900px) {
+      .landing-grid, .accounts-layout, .scams-grid, .learn-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      .header-top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .accessibility-bar {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen Reader Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ARIA Live region for screen reader updates -->
+  <div id="aria-live-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Sticky Header Nav -->
+  <header class="sticky-header" aria-label="App banner">
+    <div class="header-top-bar">
+      <div class="logo-container">
+        <a href="../index.html" class="logo-title" aria-label="Alana Wilkes portfolio home">ALANA WILKES</a>
+        <span class="logo-subtitle">Secure but Simple Prototype</span>
+      </div>
+      
+      <!-- Accessibility Buttons -->
+      <div class="accessibility-bar" aria-label="Accessibility options">
+        <button type="button" class="acc-btn" id="btn-toggle-text" onclick="toggleLargerText()" aria-pressed="false">
+          Larger Text
+        </button>
+        <button type="button" class="acc-btn" id="btn-toggle-contrast" onclick="toggleHighContrast()" aria-pressed="false">
+          High Contrast
+        </button>
+      </div>
+    </div>
+
+    <!-- Main App Navigation Tabs -->
+    <nav class="header-nav" aria-label="App Navigation">
+      <ul class="nav-tabs" role="tablist">
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link active" data-screen="landing" onclick="navigateTo('landing'); return false;" role="tab" aria-selected="true">Home</a>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link" data-screen="accounts" onclick="navigateTo('accounts'); return false;" role="tab" aria-selected="false">My Accounts</a>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link" data-screen="learn" onclick="navigateTo('learn'); return false;" role="tab" aria-selected="false">Learn</a>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link" data-screen="scams" onclick="navigateTo('scams'); return false;" role="tab" aria-selected="false">Avoid Scams</a>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link" data-screen="captcha" onclick="navigateTo('captcha'); return false;" role="tab" aria-selected="false">Practice Verification</a>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link" data-screen="compare" onclick="navigateTo('compare'); return false;" role="tab" aria-selected="false">Compare Methods</a>
+        </li>
+        <li class="nav-tab-item" role="presentation">
+          <a href="#" class="nav-tab-link" data-screen="recovery" onclick="navigateTo('recovery'); return false;" role="tab" aria-selected="false">Recovery Help</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main App Screen Container -->
+  <main id="main-content">
+
+    <!-- ==========================================================================
+         SCREEN 1: LANDING SCREEN
+         ========================================================================== */ -->
+    <section class="screen-section active" id="screen-landing" aria-labelledby="heading-landing">
+      <div class="landing-grid">
+        <div class="landing-hero">
+          <h1 class="landing-headline" id="heading-landing">Digital safety doesn't have to be confusing.</h1>
+          <p style="font-size: 1.15rem; line-height: 1.7;">
+            Many websites make security hard by forcing you to remember complicated passwords, type rapidly, or read tiny codes. 
+            <strong>Secure but Simple</strong> helps you choose security measures that fit your capabilities, set them up step-by-step, and handle authentication independently.
+          </p>
+          <div class="landing-actions">
+            <button type="button" class="btn btn-primary" onclick="navigateTo('pathway')">Find Your Security Plan</button>
+            <a href="#" class="btn btn-secondary" onclick="navigateTo('recovery'); return false;">Help, I'm locked out &rarr;</a>
+          </div>
+        </div>
+        
+        <div class="landing-sidebar">
+          <h2 class="landing-sidebar-title">What you can do here:</h2>
+          <ul class="landing-sidebar-list">
+            <li><strong>Needs Assessment:</strong> Answer simple questions to find which security settings are best for your vision, memory, and devices.</li>
+            <li><strong>Step-by-step Action Checklist:</strong> Get clear instructions for setting up passkeys, managers, or recovery methods.</li>
+            <li><strong>Practice CAPTCHAs:</strong> Learn to solve online verification grids in a calm, pressure-free sandbox.</li>
+            <li><strong>Scam Text Detector:</strong> Paste suspect texts or load screenshots to scan for immediate red flags.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 2: PATHWAY SELECTION
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-pathway" aria-labelledby="heading-pathway">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-pathway">Choose Your Starting Point</h1>
+        <p class="screen-subtitle">Select the option that matches who you are setting up security for today.</p>
+      </div>
+
+      <div class="pathway-grid">
+        <!-- Card 1 -->
+        <div class="pathway-card" onclick="selectPathway('self')">
+          <div>
+            <h2 class="pathway-card-title">Securing My Own Accounts</h2>
+            <p class="pathway-card-desc">I want to find the safest and easiest way to lock my email, shopping, and banking accounts on my own devices.</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-block">Begin Quiz</button>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="pathway-card" onclick="selectPathway('family')">
+          <div>
+            <h2 class="pathway-card-title">Helping a Family Member</h2>
+            <p class="pathway-card-desc">I am a caregiver or relative helping someone else set up accounts. I want to build a shared, reliable setup we can both manage.</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-block">Begin Quiz</button>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="pathway-card" onclick="selectPathway('accessible')">
+          <div>
+            <h2 class="pathway-card-title">I Need an Accessible Setup</h2>
+            <p class="pathway-card-desc">I prefer methods that do not require typing, looking at small details, or shifting devices. Focus on maximum physical ease.</p>
+          </div>
+          <button type="button" class="btn btn-secondary btn-block">Begin Quiz</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 3: NEEDS ASSESSMENT (QUIZ)
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-quiz" aria-labelledby="heading-quiz">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-quiz">Needs Assessment</h1>
+        <p class="screen-subtitle">Answer these five simple questions to generate your custom security recommendation plan.</p>
+      </div>
+
+      <div class="quiz-error-box" id="quiz-error-box" role="alert" tabindex="-1"></div>
+
+      <div class="quiz-outer-container">
+        <!-- Progress Header -->
+        <div class="quiz-progress-container">
+          <span class="quiz-progress-label" id="quiz-step-title">Question 1 of 5</span>
+          <div class="quiz-progress-track">
+            <div class="quiz-progress-bar" id="quiz-progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- Question Slides Frame -->
+        <div class="quiz-slider-window">
+          <div class="quiz-track" id="quiz-track">
+            
+            <!-- Slide 1 -->
+            <div class="quiz-slide" id="slide-0">
+              <fieldset class="quiz-fieldset">
+                <legend class="quiz-legend">1. Which devices do you use most often?</legend>
+                <span class="quiz-hint">Why we ask: Some security options require swapping between a computer and a phone. We want to find what's easiest.</span>
+                <div class="quiz-choices">
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q1" value="phone-only" class="quiz-choice-input" onclick="autoAdvanceQuiz(0, 'phone-only')">
+                    Only a smartphone (iPhone or Android)
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q1" value="computer-only" class="quiz-choice-input" onclick="autoAdvanceQuiz(0, 'computer-only')">
+                    Only a computer (laptop or desktop)
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q1" value="both" class="quiz-choice-input" onclick="autoAdvanceQuiz(0, 'both')">
+                    Both a phone and a computer
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q1" value="not-confident" class="quiz-choice-input" onclick="autoAdvanceQuiz(0, 'not-confident')">
+                    I have both, but I'm not confident switching between them
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="quiz-slide" id="slide-1">
+              <fieldset class="quiz-fieldset">
+                <legend class="quiz-legend">2. Does reading small text or crowded screens cause difficulty?</legend>
+                <span class="quiz-hint">Why we ask: We can avoid security methods that require reading small numbers or looking at busy designs.</span>
+                <div class="quiz-choices">
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q2" value="no" class="quiz-choice-input" onclick="autoAdvanceQuiz(1, 'no')">
+                    No, I can read standard screen text easily
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q2" value="sometimes" class="quiz-choice-input" onclick="autoAdvanceQuiz(1, 'sometimes')">
+                    Sometimes, especially when screens are cluttered
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q2" value="regularly" class="quiz-choice-input" onclick="autoAdvanceQuiz(1, 'regularly')">
+                    Regularly, I need enlarged text or screen magnifier support
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="quiz-slide" id="slide-2">
+              <fieldset class="quiz-fieldset">
+                <legend class="quiz-legend">3. How comfortable are you remembering passwords or passphrases?</legend>
+                <span class="quiz-hint">Why we ask: If remembering secrets is frustrating, we can recommend tools that fill details automatically.</span>
+                <div class="quiz-choices">
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q3" value="very" class="quiz-choice-input" onclick="autoAdvanceQuiz(2, 'very')">
+                    Very comfortable, I can easily recall secret phrases
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q3" value="somewhat" class="quiz-choice-input" onclick="autoAdvanceQuiz(2, 'somewhat')">
+                    Somewhat comfortable, but I prefer to write things down
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q3" value="none" class="quiz-choice-input" onclick="autoAdvanceQuiz(2, 'none')">
+                    Not comfortable, I'd rather not rely on memory at all
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="quiz-slide" id="slide-3">
+              <fieldset class="quiz-fieldset">
+                <legend class="quiz-legend">4. Do you experience difficulty typing, tapping small buttons, or holding devices?</legend>
+                <span class="quiz-hint">Why we ask: Complex typing is a physical barrier. We can look for simple one-tap security options.</span>
+                <div class="quiz-choices">
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q4" value="none" class="quiz-choice-input" onclick="autoAdvanceQuiz(3, 'none')">
+                    None, I can type and tap easily
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q4" value="some" class="quiz-choice-input" onclick="autoAdvanceQuiz(3, 'some')">
+                    Some difficulty typing quickly or pressing small links
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q4" value="significant" class="quiz-choice-input" onclick="autoAdvanceQuiz(3, 'significant')">
+                    Significant difficulty, typing long codes is very hard for me
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="quiz-slide" id="slide-4">
+              <fieldset class="quiz-fieldset">
+                <legend class="quiz-legend">5. What is your overall comfort level with new technology?</legend>
+                <span class="quiz-hint">Why we ask: This determines whether we recommend self-managed tools or collaborative family options.</span>
+                <div class="quiz-choices">
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q5" value="very" class="quiz-choice-input" onclick="selectQ5('very')">
+                    Very comfortable, I like setting up new tools
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q5" value="guidance" class="quiz-choice-input" onclick="selectQ5('guidance')">
+                    Comfortable as long as I have clear instructions
+                  </label>
+                  <label class="quiz-choice-label">
+                    <input type="radio" name="q5" value="support" class="quiz-choice-input" onclick="selectQ5('support')">
+                    I prefer having a lot of support from family or friends
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Quiz Navigation Controls -->
+        <div class="quiz-navigation-buttons" style="padding: 1.5rem 2.5rem 2.5rem;">
+          <button type="button" class="btn btn-secondary" id="quiz-btn-back" onclick="navigateQuiz(-1)" disabled>Back</button>
+          
+          <!-- Next or Submit Button -->
+          <button type="button" class="btn btn-primary" id="quiz-btn-next" onclick="navigateQuiz(1)">Next</button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 4: RECOMMENDATIONS
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-recommendations" aria-labelledby="heading-recommendations">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-recommendations">Your Security Plan</h1>
+        <p class="screen-subtitle">Based on your needs, here are the security methods that fit you best.</p>
+      </div>
+
+      <div class="print-bar no-print">
+        <button type="button" class="btn btn-secondary btn-print" onclick="window.print()">Save or Print This Plan</button>
+      </div>
+
+      <div class="recommender-intro">
+        <p>
+          We evaluated six authentication methods and scored them according to your preferences. 
+          Use the priority slider below to adjust your options between <strong>maximum simplicity</strong> and <strong>strict protection levels</strong>.
+        </p>
+      </div>
+
+      <!-- Priority Slider Card -->
+      <div class="slider-card no-print">
+        <h2 style="font-size: 1.25rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-emerald)">
+          Adjust Weight Priorities
+        </h2>
+        <div class="slider-container">
+          <div class="slider-labels">
+            <span>Prioritize Ease of Use</span>
+            <span>Prioritize Stronger Security</span>
+          </div>
+          <input type="range" class="slider-control" id="priority-slider" min="0" max="100" value="50" oninput="renderRecommendations()" aria-label="Ease of use versus security priority slider">
+        </div>
+      </div>
+
+      <!-- Ranked recommendations container -->
+      <div class="rec-cards-grid" id="recommendations-cards-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- Interactive Setup Checklist Card -->
+      <div class="checklist-container-card" id="checklist-card-section">
+        <h2 class="checklist-title">Action Plan: Implementation Steps</h2>
+        <p style="margin-bottom:1.5rem">Follow these step-by-step instructions to get your primary recommended systems active.</p>
+        
+        <div class="checklist-progress-summary">
+          <div style="display:flex; justify-content:space-between; font-weight:600; font-size:0.95rem">
+            <span>Progress Tracking</span>
+            <span id="checklist-progress-text">0 of 0 steps completed (0%)</span>
+          </div>
+          <div class="checklist-progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="checklist-progress-bar-aria">
+            <div class="checklist-progress-bar-fill" id="checklist-progress-bar"></div>
+          </div>
+        </div>
+
+        <div id="recommendation-checklist-container">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 5: COMPARE METHODS
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-compare" aria-labelledby="heading-compare">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-compare">Compare Security Methods</h1>
+        <p class="screen-subtitle">Review a detailed breakdown of all authentication techniques.</p>
+      </div>
+
+      <div class="print-bar no-print">
+        <button type="button" class="btn btn-secondary btn-print" onclick="window.print()">Print Comparison Table</button>
+      </div>
+
+      <!-- Filter chips -->
+      <div class="filter-chips no-print" aria-label="Table filters">
+        <button type="button" class="chip active" id="chip-all" onclick="filterCompareTable('all')">All Methods</button>
+        <button type="button" class="chip" id="chip-secure" onclick="filterCompareTable('secure')">Most Secure</button>
+        <button type="button" class="chip" id="chip-easy" onclick="filterCompareTable('easy')">Easiest to Use</button>
+        <button type="button" class="chip" id="chip-noapp" onclick="filterCompareTable('noapp')">No App Required</button>
+      </div>
+
+      <!-- Matrix Table -->
+      <div class="table-container">
+        <table class="compare-table" id="compare-matrix-table">
+          <thead>
+            <tr>
+              <th scope="col">Security Method</th>
+              <th scope="col">Security Level</th>
+              <th scope="col">Ease of Use</th>
+              <th scope="col">Accessibility Summary</th>
+              <th scope="col">Ideal Audience</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-security="medium" data-ease="high" data-app="no">
+              <th scope="row">Passphrase</th>
+              <td class="sec-medium" style="font-weight:700">Medium</td>
+              <td class="ease-veryeasy" style="font-weight:700">Very Easy</td>
+              <td>Write-down friendly; doesn't require a smartphone. Involves substantial manual typing.</td>
+              <td>Users who want strong passwords without setting up complex apps.</td>
+            </tr>
+            <tr data-security="high" data-ease="medium" data-app="yes">
+              <th scope="row">Password Manager</th>
+              <td class="sec-high" style="font-weight:700">High</td>
+              <td class="ease-moderate" style="font-weight:700">Moderate</td>
+              <td>Fills in passwords automatically, eliminating typing. Requires remembering one complex master key.</td>
+              <td>Users with many digital credentials who struggle with recall.</td>
+            </tr>
+            <tr data-security="medium" data-ease="high" data-app="no">
+              <th scope="row">SMS codes (Text messages)</th>
+              <td class="sec-standard" style="font-weight:700">Standard</td>
+              <td class="ease-veryeasy" style="font-weight:700">Very Easy</td>
+              <td>Familiar interface. Requires reading and copy-typing short numeric codes from messages.</td>
+              <td>Users who want simple setup using their mobile number.</td>
+            </tr>
+            <tr data-security="high" data-ease="medium" data-app="yes">
+              <th scope="row">Authenticator App</th>
+              <td class="sec-high" style="font-weight:700">High</td>
+              <td class="ease-moderate" style="font-weight:700">Moderate</td>
+              <td>High security. Requires copying 6-digit codes within a 30-second countdown window.</td>
+              <td>Tech-comfortable users wanting strong verification layers.</td>
+            </tr>
+            <tr data-security="high" data-ease="high" data-app="no">
+              <th scope="row">Passkey</th>
+              <td class="sec-high" style="font-weight:700">High</td>
+              <td class="ease-veryeasy" style="font-weight:700">Very Easy</td>
+              <td>Unlocks accounts using device biometrics (face/fingerprint). Zero memory or typing load.</td>
+              <td>Users with modern touch-ID or face-scan smartphones and laptops.</td>
+            </tr>
+            <tr data-security="medium" data-ease="high" data-app="no">
+              <th scope="row">Caregiver-Assisted Setup</th>
+              <td class="sec-medium" style="font-weight:700">Medium</td>
+              <td class="ease-easy" style="font-weight:700">Easy</td>
+              <td>Shares management burdens with a trusted helper. Keeps recovery routes accessible.</td>
+              <td>Users wanting peace of mind, physical fallback, or guidance.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 6: MY ACCOUNTS
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-accounts" aria-labelledby="heading-accounts">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-accounts">My Security Tracker</h1>
+        <p class="screen-subtitle">Keep track of the safety parameters set up for each of your personal accounts.</p>
+      </div>
+
+      <div class="warning-banner">
+        <strong>Privacy Notice:</strong> Everything entered on this page remains entirely in your local browser tab for this session. 
+        Nothing is encrypted, saved to a server, or preserved after a page refresh. This tool is a training helper, not a real password manager.
+      </div>
+
+      <div class="accounts-layout">
+        <!-- Add Account Card -->
+        <div class="card no-print">
+          <h2 style="font-size: 1.5rem; font-family: var(--font-serif); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem">
+            Track a New Account
+          </h2>
+          <form id="form-add-account" onsubmit="addAccount(event)">
+            <div class="form-group">
+              <label for="acc-name" class="form-label">Website or App Name</label>
+              <input type="text" class="form-input" id="acc-name" placeholder="e.g. Google Email, Bank Account" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="acc-user" class="form-label">Username / Login ID</label>
+              <input type="text" class="form-input" id="acc-user" placeholder="e.g. alana@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="acc-method" class="form-label">Security Verification Method Used</label>
+              <select class="form-input" id="acc-method" style="background-image:none">
+                <option value="Passphrase">Passphrase</option>
+                <option value="Password Manager">Password Manager</option>
+                <option value="SMS MFA">SMS Verification Codes</option>
+                <option value="Authenticator App">Authenticator App</option>
+                <option value="Passkey">Passkey</option>
+                <option value="Caregiver-Assisted">Caregiver-Assisted</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="acc-pass" class="form-label">Password or Passphrase</label>
+              <div class="password-input-wrapper">
+                <input type="password" class="form-input" id="acc-pass" oninput="checkPasswordStrengthLive()" placeholder="Enter password text">
+                <button type="button" class="password-toggle-btn" id="acc-pass-toggle" onclick="toggleFormPasswordVisibility()">Show</button>
+              </div>
+              
+              <!-- Strength meter -->
+              <div class="strength-meter-container" id="strength-meter-box">
+                <div class="strength-bar-track">
+                  <div class="strength-bar-fill" id="strength-bar"></div>
+                </div>
+                <span class="strength-text" id="strength-text">Weak</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="acc-notes" class="form-label">Personal Notes (e.g. recovery phone, hints)</label>
+              <textarea class="form-input" id="acc-notes" style="height: 80px; resize: none;" placeholder="Add custom notes..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Add to List</button>
+          </form>
+        </div>
+
+        <!-- Saved list card -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem">
+            <h2 style="font-size: 1.5rem; font-family: var(--font-serif)">Your Registered Accounts</h2>
+            <button type="button" class="btn btn-secondary btn-print no-print" onclick="window.print()" style="min-height:38px; padding: 0.5rem 1rem">Print Accounts List</button>
+          </div>
+
+          <div class="saved-accounts-list" id="saved-accounts-container">
+            <!-- Populated via safe DOM manipulation -->
+            <p style="font-style: italic; color: var(--text-muted); text-align: center; padding: 3rem; background: var(--bg-card); border: 1px dashed var(--border-color)">
+              No accounts registered yet. Use the form on the left to add one.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 7: LEARN THE BASICS
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-learn" aria-labelledby="heading-learn">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-learn">Learn the Basics</h1>
+        <p class="screen-subtitle">Simple, direct answers to common cybersecurity questions.</p>
+      </div>
+
+      <div class="learn-grid">
+        <!-- block 1 -->
+        <div class="card">
+          <h2 style="font-family:var(--font-serif); font-size:1.5rem; margin-bottom:1rem; color:var(--color-emerald)">
+            1. What makes a password strong?
+          </h2>
+          <p>
+            Historically, people were told to create passwords with weird symbols, numbers, and capital letters (e.g. <code>Pa$$w0rd!</code>). 
+            Computer scripts guess these very quickly. 
+            Today, security experts advocate for <strong>length</strong> over complexity.
+          </p>
+          <p>
+            A <strong>Passphrase</strong> uses 4 or more random, dictionary words combined. 
+            They are easy for humans to picture and remember, but take computers trillions of years to guess.
+          </p>
+          
+          <div class="example-box">
+            <h3 style="font-size:1rem; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.05em">Examples Compared</h3>
+            <div class="example-comparison">
+              <div class="ex-bad">
+                <strong style="color:#8C2D19">Weak &amp; Hard to Remember</strong>
+                <p style="font-family:monospace; font-size:1.1rem; margin-top:0.25rem">P@ssw0rd!12</p>
+                <span style="font-size:0.8rem; color:var(--text-muted)">Short, common letters, easy for hackers to crack.</span>
+              </div>
+              <div class="ex-good">
+                <strong style="color:var(--color-emerald)">Strong &amp; Easy to Remember</strong>
+                <p style="font-family:monospace; font-size:1.1rem; margin-top:0.25rem">crater window violin yellow</p>
+                <span style="font-size:0.8rem; color:var(--text-muted)">Long, simple words. Write this down in a secure drawer.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- block 2 -->
+        <div class="card">
+          <h2 style="font-family:var(--font-serif); font-size:1.5rem; margin-bottom:1rem; color:var(--color-emerald)">
+            2. Two-Factor Authentication (2FA)
+          </h2>
+          <p>
+            Think of Two-Factor Authentication as a <strong>second lock on your front door</strong>. 
+            Even if a thief manages to copy or steal your primary door key (your password), they still cannot enter without the second key (a code sent to your phone or app).
+          </p>
+          <p>
+            This ensures that even if your password is leaked in a corporate database breach, your personal account remains locked. 
+            We recommend enabling 2FA on your critical accounts (email, bank, and medical portals).
+          </p>
+
+          <div style="background-color: var(--bg-paper); padding:1rem; border:1px solid var(--border-color); margin-top:1rem">
+            <strong>Key Benefit:</strong> If you receive an unexpected code on your phone, it means someone else guessed your password. 
+            Do not enter the code, and change your password immediately.
+          </div>
+        </div>
+
+        <!-- block 3 -->
+        <div class="card" style="grid-column: span 2">
+          <h2 style="font-family:var(--font-serif); font-size:1.5rem; margin-bottom:1rem; color:var(--color-emerald)">
+            3. CAPTCHAs (Security Verification Grids)
+          </h2>
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:2rem">
+            <div>
+              <p>
+                A CAPTCHA is a test to verify that you are a real human, not a spam program. 
+                Websites do this by showing you wavy text, or a grid of pictures, and asking you to click certain items (like traffic lights or crosswalks).
+              </p>
+              <p>
+                These represent a significant barrier for screen reader users, those with physical tremors, or those with visual difficulty. 
+                Most CAPTCHAs offer an <strong>Audio option</strong> (look for a small headphones icon) that speaks numbers out loud instead of showing pictures.
+              </p>
+            </div>
+            <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; background:var(--bg-paper); border:1px solid var(--border-color); padding:1.5rem">
+              <span style="font-weight:600; text-align:center; margin-bottom:1rem">Want to practice in a pressure-free environment?</span>
+              <button type="button" class="btn btn-secondary btn-block" onclick="navigateTo('captcha')">Practice Grids</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 8: AVOID SCAMS
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-scams" aria-labelledby="heading-scams">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-scams">Avoid Online Scams</h1>
+        <p class="screen-subtitle">Learn to spot malicious messages and test messages you've received.</p>
+      </div>
+
+      <div class="scams-grid">
+        <!-- Scams Catalog -->
+        <div>
+          <h2 style="font-family:var(--font-serif); font-size:1.5rem; margin-bottom:1.5rem">5 Common Scam Tactics</h2>
+          
+          <div class="scam-item">
+            <h3 class="scam-title">1. Tech Support Alerts</h3>
+            <p><strong>What it looks like:</strong> A pop-up appears warning that your computer is infected, showing a phone number to call immediately.</p>
+            <p><em>What to do instead:</em> Close the browser. Real tech support companies (like Microsoft or Apple) never display phone numbers in warning screens.</p>
+          </div>
+
+          <div class="scam-item">
+            <h3 class="scam-title">2. Grandchild in Trouble</h3>
+            <p><strong>What it looks like:</strong> A caller claiming to be a grandchild, lawyer, or police officer demands money for emergency bail, requesting secrecy.</p>
+            <p><em>What to do instead:</em> Hang up. Call your grandchild or their parents directly on their known phone number to verify the story.</p>
+          </div>
+
+          <div class="scam-item">
+            <h3 class="scam-title">3. Fake Bank/Government Alerts</h3>
+            <p><strong>What it looks like:</strong> A text warning that your bank account is frozen or that the IRS demands immediate payment for back taxes.</p>
+            <p><em>What to do instead:</em> Never reply. Open your web browser, look up the official phone number of your bank or the agency, and call them directly.</p>
+          </div>
+
+          <div class="scam-item">
+            <h3 class="scam-title">4. Romance Scams</h3>
+            <p><strong>What it looks like:</strong> A friend met online quickly declares love, then requests funds for flights, medical issues, or bad investments.</p>
+            <p><em>What to do instead:</em> Cut off contact. Never send money, gift cards, or wire transfers to individuals you have not met in person.</p>
+          </div>
+
+          <div class="scam-item">
+            <h3 class="scam-title">5. Prize or Lottery Scams</h3>
+            <p><strong>What it looks like:</strong> A letter or email claims you won a lottery, but requires paying a processing fee or tax before release.</p>
+            <p><em>What to do instead:</em> Discard the notice. If you did not buy a ticket, you did not win a contest.</p>
+          </div>
+        </div>
+
+        <!-- Scam Text Checker -->
+        <div class="scam-checker-card">
+          <h2 style="font-family:var(--font-serif); font-size:1.5rem; margin-bottom:0.5rem">Scam Message Analyzer</h2>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem">
+            Paste suspicious email or text contents below to check them against common scam phrases.
+          </p>
+
+          <form id="scam-checker-form" onsubmit="scanScamText(event)">
+            <label for="scam-text-input" class="sr-only">Suspicious message text</label>
+            <textarea class="textarea-scam" id="scam-text-input" placeholder="Paste the message contents here..."></textarea>
+            
+            <div style="display:flex; justify-content:space-between; gap:1rem">
+              <button type="button" class="btn btn-secondary" onclick="clearScamChecker()">Clear</button>
+              <button type="submit" class="btn btn-primary" style="flex-grow:1">Analyze Message</button>
+            </div>
+
+            <!-- OCR screenshot analyzer -->
+            <div class="file-upload-wrapper">
+              <span class="form-label" style="display:block; margin-bottom:0.5rem">Or Scan a Screenshot of the Message</span>
+              <label class="file-upload-label" id="ocr-dropzone">
+                <span id="ocr-prompt-text"><strong>Click to select a screenshot image</strong><br>(Supports PNG, JPG, JPEG)</span>
+                <input type="file" class="file-upload-input" id="scam-file-input" accept="image/*" onchange="handleScreenshotUpload(event)">
+                <img id="screenshot-preview" class="preview-thumbnail" alt="Screenshot preview">
+              </label>
+              
+              <!-- Loader for OCR process -->
+              <div class="ocr-loader" id="ocr-loading-indicator">
+                <!-- SVG spinner -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="animation: spin 1s linear infinite;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                </svg>
+                <style>
+                  @keyframes spin { 100% { transform: rotate(360deg); } }
+                </style>
+                <span id="ocr-loader-text">Reading message text from image...</span>
+              </div>
+            </div>
+          </form>
+
+          <!-- Verdict results output -->
+          <div class="verdict-box" id="scam-verdict-box" role="region" aria-live="assertive" tabindex="-1">
+            <h3 class="verdict-title" id="scam-verdict-title">Verdict</h3>
+            <p id="scam-verdict-desc" style="margin-bottom:1rem"></p>
+            <div id="scam-flags-list" style="font-size:0.95rem"></div>
+          </div>
+          
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-top:1.5rem; line-height:1.4">
+            *Disclaimer: This scanner uses pattern-matching heuristics. It does not replace human judgment. If you are in doubt, always verify with a trusted person before responding.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 9: PRACTICE VERIFICATION (CAPTCHA)
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-captcha" aria-labelledby="heading-captcha">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-captcha">Verification Sandbox</h1>
+        <p class="screen-subtitle">Practice solving security grid verification tasks in a calm environment without time limits.</p>
+      </div>
+
+      <div class="captcha-outer">
+        <!-- Prompt Box -->
+        <div class="captcha-prompt-box">
+          <h2 class="captcha-prompt-title" id="captcha-instruction">Select all the squares showing a circle</h2>
+          <span style="font-size:0.9rem; opacity:0.9">Click/tap tiles to select. Press "Verify Selection" when done.</span>
+        </div>
+
+        <!-- Feedback Alert box -->
+        <div class="captcha-feedback" id="captcha-feedback-msg" role="status" aria-live="polite"></div>
+
+        <!-- 3x3 Grid -->
+        <div class="captcha-grid" id="captcha-grid-container" role="group" aria-label="Captcha tile selection grid">
+          <!-- Rendered dynamically in JS -->
+        </div>
+
+        <!-- Controls -->
+        <div class="captcha-actions">
+          <button type="button" class="btn btn-secondary" onclick="generateNewCaptcha()">Try a New One</button>
+          <button type="button" class="btn btn-primary" onclick="checkCaptchaAnswer()">Verify Selection</button>
+        </div>
+
+        <!-- Tips List -->
+        <div class="card" style="margin-top:2.5rem">
+          <h3 style="font-family:var(--font-serif); font-size:1.2rem; margin-bottom:0.75rem">Helpful Verification Tips:</h3>
+          <ul style="padding-left:1.5rem; display:flex; flex-direction:column; gap:0.5rem; font-size:0.95rem">
+            <li><strong>Audio alternative:</strong> Look for a headphones icon in real grids to hear the verification phrase instead of looking at images.</li>
+            <li><strong>No time limits:</strong> Most CAPTCHAs are not timed. Take your time to examine each image tile.</li>
+            <li><strong>Zoom helper:</strong> Press <code>Ctrl</code> and <code>+</code> on Windows to magnify the grid elements for easier viewing.</li>
+            <li><strong>Skip or refresh:</strong> If a grid is too blurry or difficult to verify, click the refresh button to get a new set of images without penalties.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==========================================================================
+         SCREEN 10: RECOVERY HELP
+         ========================================================================== */ -->
+    <section class="screen-section" id="screen-recovery" aria-labelledby="heading-recovery">
+      <div class="screen-header">
+        <h1 class="screen-title" id="heading-recovery">Account Recovery Manual</h1>
+        <p class="screen-subtitle">Direct, step-by-step checklists to resolve common login roadblocks.</p>
+      </div>
+
+      <div class="print-bar no-print">
+        <button type="button" class="btn btn-secondary btn-print" onclick="window.print()">Print Recovery Guide</button>
+      </div>
+
+      <div class="recovery-grid">
+        
+        <!-- Case 1 -->
+        <div class="recovery-card">
+          <h2 class="recovery-card-title">I'm Locked Out</h2>
+          <div class="recovery-steps">
+            <div class="recovery-step">
+              <span class="recovery-step-num">01.</span>
+              <p>Locate the <strong>Forgot Password</strong> link directly on the login form. Do not call numbers found on Google search.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">02.</span>
+              <p>Enter your username. Check your email or text messages on your registered phone for a verification link.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">03.</span>
+              <p>Input the code. When prompted, create a new <strong>Passphrase</strong>. Write it down immediately on physical paper.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">04.</span>
+              <p>Log in using the new details and verify that your backup recovery email is set correctly.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 2 -->
+        <div class="recovery-card">
+          <h2 class="recovery-card-title">Lost / Replaced My Device</h2>
+          <div class="recovery-steps">
+            <div class="recovery-step">
+              <span class="recovery-step-num">01.</span>
+              <p>Transfer your phone number (SIM card) to your new mobile device to ensure text message (SMS) codes arrive.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">02.</span>
+              <p>Locate the <strong>Recovery Codes</strong> sheet you generated when first setting up your authenticator app.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">03.</span>
+              <p>If you lack codes, click "Try another way" on the login screen to receive verification via email or backup contact.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">04.</span>
+              <p>Re-download the authenticator app and register the website's credentials to start generating codes again.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 3 -->
+        <div class="recovery-card">
+          <h2 class="recovery-card-title">I Think I was Compromised</h2>
+          <div class="recovery-steps">
+            <div class="recovery-step">
+              <span class="recovery-step-num">01.</span>
+              <p><strong>Disconnect:</strong> Turn off your computer's internet or Wi-Fi immediately to prevent remote hackers from grabbing data.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">02.</span>
+              <p>Use a separate, safe device (like your phone) to log in and change your email and primary banking passwords immediately.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">03.</span>
+              <p>Log into your bank accounts, look for unauthorized transactions, and call their customer fraud line to freeze assets.</p>
+            </div>
+            <div class="recovery-step">
+              <span class="recovery-step-num">04.</span>
+              <p>Contact your family or a trusted technician to review your device's security status before connecting online again.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <span class="footer-copyright">SECURE BUT SIMPLE • PROTOTYPE</span>
+      <span>Accessibility &amp; Security Demonstration</span>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT APP INTERACTION LOGIC
+       ========================================================================== */ -->
+  <script>
+    /* ==========================================================================
+       GLOBAL APP STATE
+       ========================================================================== */
+    let state = {
+      pathway: null,
+      currentQuestion: 0,
+      answers: {
+        q1: null,
+        q2: null,
+        q3: null,
+        q4: null,
+        q5: null
+      },
+      accounts: [],
+      sliderPriority: 50,
+      totalChecklistSteps: 0
+    };
+
+    // Authenticators specifications mapping
+    const methods = {
+      passphrase: {
+        name: "Passphrase",
+        security: 60,
+        ease: 80,
+        desc: "A sequence of 4+ random words written down and kept safe.",
+        ideal: "Users wanting passwords without managing complex applications.",
+        notes: "Requires typing words, but works without mobile phone dependency.",
+        steps: [
+          "Choose four random, unconnected words (e.g. 'crater-window-violin-yellow').",
+          "Write the words in order on a physical note card.",
+          "Place the card in a secure, designated place at home (like a lockbox).",
+          "Practice typing the sequence twice on your device to build familiarity."
+        ]
+      },
+      manager: {
+        name: "Password Manager",
+        security: 85,
+        ease: 70,
+        desc: "A software application that saves and autofills credentials.",
+        ideal: "Users with dozens of separate websites struggling to recall secrets.",
+        notes: "Requires memorizing one strong Master Phrase to unlock the application.",
+        steps: [
+          "Install a password manager extension (like Bitwarden) in your browser.",
+          "Formulate a strong Master Passphrase to lock the application vault.",
+          "Write down your master key and emergency backup code, storing them physically.",
+          "Save login credentials to the vault as you sign into websites.",
+          "Enable biometric or PIN autofill options on your mobile phone."
+        ]
+      },
+      sms: {
+        name: "SMS Text Codes",
+        security: 55,
+        ease: 75,
+        desc: "Receiving text messages containing short entry confirmation codes.",
+        ideal: "Users wanting two-factor locks without downloading extra mobile apps.",
+        notes: "Vulnerable to cellular phone scams, but far safer than no second lock.",
+        steps: [
+          "Enter your website security settings page.",
+          "Locate 'Two-Factor Verification' and select 'SMS Text Message'.",
+          "Type your mobile number and confirm the linkage with the test code sent.",
+          "Keep your mobile phone nearby when signing in to receive future code texts."
+        ]
+      },
+      authenticator: {
+        name: "Authenticator App",
+        security: 80,
+        ease: 50,
+        desc: "A phone app generating fresh verification codes every 30 seconds.",
+        ideal: "Tech-comfortable individuals wanting strong secondary defenses.",
+        notes: "Requires copying 6-digit sequences quickly before timers reset.",
+        steps: [
+          "Download a secure authenticator (e.g. Google Authenticator) from your app store.",
+          "Select 'Authenticator App' under account security parameters.",
+          "Scan the QR code shown on screen using the mobile app's camera.",
+          "Input the generated 6-digit link code to confirm linkage.",
+          "Download and print backup recovery codes in case your phone is lost."
+        ]
+      },
+      passkey: {
+        name: "Passkey",
+        security: 95,
+        ease: 90,
+        desc: "Logging in using your device's fingerprint scan, face recognition, or PIN.",
+        ideal: "Users with modern devices wanting robust security with zero typing.",
+        notes: "Requires a phone or computer with working face/touch readers or a screen PIN.",
+        steps: [
+          "Confirm screen-lock locks (PIN, touch, face scan) are active on your device.",
+          "Go to supported account settings and click 'Set up Passkey'.",
+          "Perform a fingerprint or face scan when the system prompt appears.",
+          "Uncheck the standard password field next time you sign in and log in with a scan."
+        ]
+      },
+      caregiver: {
+        name: "Caregiver-Assisted Setup",
+        security: 70,
+        ease: 75,
+        desc: "Setting up locks and backup accounts with a highly trusted contact.",
+        ideal: "Individuals desiring a physical safety net or technical guidance.",
+        notes: "Requires absolute trust; your helper will co-manage recovery options.",
+        steps: [
+          "Designate a trusted relative, close friend, or designated caregiver.",
+          "Add them as a secondary recovery email or telephone link on vital portals.",
+          "Create a shared password vault or record entries in a physical ledger kept securely.",
+          "Coordinate shared warning settings so they receive notifications of weird login attempts."
+        ]
+      }
+    };
+
+    /* ==========================================================================
+       SPA SCREEN MANAGEMENT
+       ========================================================================== */
+    function navigateTo(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen-section').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      // Show target screen
+      const targetSection = document.getElementById('screen-' + screenId);
+      if (targetSection) {
+        targetSection.classList.add('active');
+        
+        // Move keyboard focus to heading for screen readers
+        const heading = targetSection.querySelector('h1, h2');
+        if (heading) {
+          heading.setAttribute('tabindex', '-1');
+          heading.focus();
+        }
+      }
+
+      // Update Navigation Active state
+      document.querySelectorAll('.nav-tab-link').forEach(link => {
+        if (link.getAttribute('data-screen') === screenId) {
+          link.classList.add('active');
+          link.setAttribute('aria-selected', 'true');
+        } else {
+          link.classList.remove('active');
+          link.setAttribute('aria-selected', 'false');
+        }
+      });
+
+      // Announce status
+      const titleText = targetSection?.querySelector('h1, h2')?.textContent || screenId;
+      announceSR(`Loaded screen: ${titleText}`);
+
+      // Reset scroll position
+      window.scrollTo(0, 0);
+    }
+
+    function announceSR(text) {
+      const announcer = document.getElementById('aria-live-announcer');
+      if (announcer) {
+        announcer.textContent = text;
+      }
+    }
+
+    /* ==========================================================================
+       ACCESSIBILITY BAR ACTIONS
+       ========================================================================== */
+    function toggleLargerText() {
+      const html = document.documentElement;
+      const btn = document.getElementById('btn-toggle-text');
+      const isActive = html.classList.toggle('larger-text');
+      
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      announceSR(isActive ? "Text size enlarged" : "Text size reset to default");
+    }
+
+    function toggleHighContrast() {
+      const html = document.documentElement;
+      const btn = document.getElementById('btn-toggle-contrast');
+      const isActive = html.classList.toggle('high-contrast');
+      
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      announceSR(isActive ? "High contrast mode activated" : "High contrast mode deactivated");
+    }
+
+    /* ==========================================================================
+       PATHWAY SELECTION ACTIONS
+       ========================================================================== */
+    function selectPathway(pathwayType) {
+      state.pathway = pathwayType;
+      
+      // Reset quiz
+      state.currentQuestion = 0;
+      for (let k in state.answers) state.answers[k] = null;
+      
+      // Clear radio selectors
+      document.querySelectorAll('.quiz-choice-input').forEach(input => {
+        input.checked = false;
+      });
+
+      // Update UI slides
+      updateQuizProgress();
+      updateQuizTrackPosition();
+
+      navigateTo('quiz');
+    }
+
+    /* ==========================================================================
+       QUIZ CONTROLS
+       ========================================================================== */
+    function updateQuizProgress() {
+      const bar = document.getElementById('quiz-progress-bar-fill');
+      const label = document.getElementById('quiz-step-title');
+      const index = state.currentQuestion;
+
+      bar.style.width = ((index + 1) * 20) + '%';
+      label.textContent = `Question ${index + 1} of 5`;
+
+      // Manage nav buttons
+      document.getElementById('quiz-btn-back').disabled = (index === 0);
+      
+      const nextBtn = document.getElementById('quiz-btn-next');
+      if (index === 4) {
+        nextBtn.textContent = "Submit and View Plan";
+      } else {
+        nextBtn.textContent = "Next";
+      }
+    }
+
+    function updateQuizTrackPosition() {
+      const track = document.getElementById('quiz-track');
+      track.style.transform = `translateX(-${state.currentQuestion * 20}%)`;
+    }
+
+    function navigateQuiz(direction) {
+      // Hide error box if visible
+      document.getElementById('quiz-error-box').style.display = 'none';
+
+      if (direction === -1 && state.currentQuestion > 0) {
+        state.currentQuestion--;
+        updateQuizProgress();
+        updateQuizTrackPosition();
+      } else if (direction === 1) {
+        if (state.currentQuestion < 4) {
+          // If moving forward, allow it (validation happens on final submit)
+          state.currentQuestion++;
+          updateQuizProgress();
+          updateQuizTrackPosition();
+        } else {
+          // Final Submit Validation
+          submitQuizAnswers();
+        }
+      }
+    }
+
+    function autoAdvanceQuiz(qIndex, val) {
+      state.answers['q' + (qIndex + 1)] = val;
+      
+      // Auto-advance after small delay for visual feedback (unless on Q5)
+      if (qIndex < 4) {
+        setTimeout(() => {
+          if (state.currentQuestion === qIndex) { // Check that user hasn't already clicked elsewhere
+            state.currentQuestion++;
+            updateQuizProgress();
+            updateQuizTrackPosition();
+          }
+        }, 250);
+      }
+    }
+
+    function selectQ5(val) {
+      state.answers.q5 = val;
+    }
+
+    function submitQuizAnswers() {
+      // Check for unanswered questions
+      let firstUnansweredIdx = -1;
+      for (let i = 1; i <= 5; i++) {
+        if (state.answers['q' + i] === null) {
+          firstUnansweredIdx = i - 1;
+          break;
+        }
+      }
+
+      if (firstUnansweredIdx !== -1) {
+        // Go back to the first unanswered slide
+        state.currentQuestion = firstUnansweredIdx;
+        updateQuizProgress();
+        updateQuizTrackPosition();
+
+        // Show error alert message
+        const errBox = document.getElementById('quiz-error-box');
+        errBox.textContent = `Question ${firstUnansweredIdx + 1} must be answered before submitting.`;
+        errBox.style.display = 'block';
+        errBox.focus();
+        announceSR(`Error: Question ${firstUnansweredIdx + 1} is unanswered.`);
+      } else {
+        // Calculate points and move to recommendations screen
+        calculateScoringAndShow();
+      }
+    }
+
+    /* ==========================================================================
+       RECOMMENDER ENGINE LOGIC
+       ========================================================================== */
+    function calculateScoringAndShow() {
+      // Base scores
+      let scores = {
+        passphrase: 50,
+        manager: 50,
+        sms: 50,
+        authenticator: 50,
+        passkey: 50,
+        caregiver: 50
+      };
+
+      const ans = state.answers;
+      const path = state.pathway;
+
+      // Q1: Devices
+      if (ans.q1 === 'phone-only') {
+        scores.sms += 15;
+        scores.passkey += 15;
+        scores.authenticator += 5;
+        scores.passphrase += 5;
+        scores.caregiver += 5;
+        scores.manager -= 10;
+      } else if (ans.q1 === 'computer-only') {
+        scores.passphrase += 15;
+        scores.manager += 15;
+        scores.sms -= 15;
+        scores.authenticator -= 20;
+        scores.passkey += 5;
+      } else if (ans.q1 === 'both') {
+        scores.manager += 20;
+        scores.sms += 15;
+        scores.authenticator += 15;
+        scores.passkey += 20;
+      } else if (ans.q1 === 'not-confident') {
+        scores.sms -= 20;
+        scores.authenticator -= 25;
+        scores.passphrase += 20;
+        scores.caregiver += 20;
+        scores.passkey += 5;
+      }
+
+      // Q2: Reading screens
+      if (ans.q2 === 'sometimes') {
+        scores.sms -= 5;
+        scores.authenticator -= 10;
+      } else if (ans.q2 === 'regularly') {
+        scores.passkey += 25;
+        scores.caregiver += 20;
+        scores.sms -= 20;
+        scores.authenticator -= 30;
+        scores.manager -= 10;
+        scores.passphrase -= 5;
+      }
+
+      // Q3: Memory
+      if (ans.q3 === 'very') {
+        scores.passphrase += 25;
+        scores.manager += 10;
+        scores.passkey += 15;
+      } else if (ans.q3 === 'somewhat') {
+        scores.manager += 20;
+        scores.passphrase += 10;
+        scores.caregiver += 10;
+        scores.passkey += 10;
+      } else if (ans.q3 === 'none') {
+        scores.passkey += 30;
+        scores.manager += 20;
+        scores.caregiver += 25;
+        scores.passphrase -= 30;
+      }
+
+      // Q4: Dexterity
+      if (ans.q4 === 'some') {
+        scores.sms -= 10;
+        scores.authenticator -= 10;
+        scores.manager -= 5;
+      } else if (ans.q4 === 'significant') {
+        scores.passkey += 30;
+        scores.caregiver += 25;
+        scores.sms -= 25;
+        scores.authenticator -= 25;
+        scores.manager -= 15;
+        scores.passphrase -= 10;
+      }
+
+      // Q5: Comfort with new tech
+      if (ans.q5 === 'very') {
+        scores.passkey += 20;
+        scores.manager += 20;
+        scores.authenticator += 20;
+      } else if (ans.q5 === 'guidance') {
+        scores.manager += 10;
+        scores.sms += 15;
+        scores.caregiver += 15;
+      } else if (ans.q5 === 'support') {
+        scores.caregiver += 35;
+        scores.sms += 10;
+        scores.passphrase += 5;
+        scores.passkey -= 10;
+        scores.manager -= 20;
+        scores.authenticator -= 20;
+      }
+
+      // Pathway adjustments
+      if (path === 'family') {
+        scores.caregiver += 25;
+      } else if (path === 'accessible') {
+        scores.passkey += 20;
+        scores.caregiver += 20;
+        scores.authenticator -= 10;
+      }
+
+      state.recommendationScores = scores;
+      renderRecommendations();
+      navigateTo('recommendations');
+    }
+
+    function renderRecommendations() {
+      const sliderVal = parseInt(document.getElementById('priority-slider').value);
+      const scores = state.recommendationScores || { passphrase: 50, manager: 50, sms: 50, authenticator: 50, passkey: 50, caregiver: 50 };
+      
+      const easeWeight = (100 - sliderVal) / 100;
+      const securityWeight = sliderVal / 100;
+
+      let ranked = [];
+      for (let key in methods) {
+        const method = methods[key];
+        const recPoints = scores[key] || 50;
+        
+        // Combine recommendations + sliders
+        const finalScore = (recPoints * 0.4) + (method.ease * easeWeight * 60) + (method.security * securityWeight * 60);
+        
+        // Generate personalized matching copy
+        let reason = "This matches your device selections.";
+        const ans = state.answers;
+        if (key === 'passkey') {
+          if (ans.q3 === 'none') reason = "Requires no memory retention, matching your preference to bypass memory-heavy passwords.";
+          else if (ans.q4 === 'significant') reason = "Employs simple biometric scans, avoiding manual typing roadblocks.";
+          else if (ans.q2 === 'regularly') reason = "Bypasses small text displays and intricate keypads entirely.";
+        } else if (key === 'caregiver') {
+          if (ans.q5 === 'support') reason = "Permits trusted oversight, matching your preference for strong setup support.";
+          else if (state.pathway === 'family') reason = "Configured for active family support, sharing credentials securely.";
+        } else if (key === 'manager') {
+          if (ans.q3 === 'somewhat' || ans.q3 === 'none') reason = "Fills fields automatically, reducing password fatigue.";
+        } else if (key === 'passphrase') {
+          if (ans.q1 === 'computer-only') reason = "Doesn't require external devices and is friendly for physical record-keeping.";
+          else if (ans.q3 === 'very') reason = "Capitalizes on your solid comfort with memorizing passwords.";
+        } else if (key === 'sms') {
+          if (ans.q1 === 'phone-only' && ans.q5 === 'guidance') reason = "Familiar SMS channel. No separate apps required.";
+        } else if (key === 'authenticator') {
+          if (ans.q5 === 'very' && ans.q1 === 'both') reason = "Fits your high tech-comfort level to provide strong, custom locks.";
+        }
+
+        ranked.push({
+          key: key,
+          name: method.name,
+          desc: method.desc,
+          security: method.security,
+          ease: method.ease,
+          ideal: method.ideal,
+          notes: method.notes,
+          reason: reason,
+          steps: method.steps,
+          score: finalScore
+        });
+      }
+
+      // Sort descending
+      ranked.sort((a, b) => b.score - a.score);
+
+      // Render cards
+      const container = document.getElementById('recommendations-cards-container');
+      container.innerHTML = ''; // Predefined keys, safe to clear
+
+      const top3 = ranked.slice(0, 3);
+      top3.forEach((rec, idx) => {
+        const card = document.createElement('div');
+        card.className = 'rec-card';
+        if (idx === 0) card.classList.add('rec-card-featured');
+
+        const secText = rec.security >= 80 ? 'High' : (rec.security >= 60 ? 'Medium' : 'Standard');
+        const easeText = rec.ease >= 80 ? 'Very Easy' : (rec.ease >= 65 ? 'Easy' : 'Moderate');
+
+        card.innerHTML = `
+          ${idx === 0 ? '<div class="rec-badge">Primary Match</div>' : ''}
+          <div class="rec-header">
+            <h3 class="rec-card-title">${rec.name}</h3>
+          </div>
+          <p class="rec-desc">${rec.desc}</p>
+          <div class="rec-metrics">
+            <div class="rec-metric-item">
+              <span class="rec-metric-label">Security:</span>
+              <span class="rec-metric-val sec-${secText.toLowerCase()}">${secText}</span>
+            </div>
+            <div class="rec-metric-item">
+              <span class="rec-metric-label">Ease of Use:</span>
+              <span class="rec-metric-val ease-${easeText.replace(' ', '').toLowerCase()}">${easeText}</span>
+            </div>
+          </div>
+          <div class="rec-why-fit">
+            <strong>Why this fits:</strong> ${rec.reason}
+          </div>
+          <div class="rec-details">
+            <p><strong>Ideal for:</strong> ${rec.ideal}</p>
+            <p class="rec-notes"><strong>Accessibility Note:</strong> ${rec.notes}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Render checklists
+      renderActionChecklist(top3.slice(0, 2));
+    }
+
+    function renderActionChecklist(top2) {
+      const container = document.getElementById('recommendation-checklist-container');
+      container.innerHTML = '';
+      
+      let totalSteps = 0;
+      
+      top2.forEach((rec) => {
+        const section = document.createElement('div');
+        section.className = 'checklist-method-section';
+        
+        const title = document.createElement('h3');
+        title.className = 'checklist-method-title';
+        title.textContent = `Setup Guide: ${rec.name}`;
+        section.appendChild(title);
+        
+        const ul = document.createElement('ul');
+        ul.className = 'checklist-steps-list';
+        
+        rec.steps.forEach((step, sIdx) => {
+          totalSteps++;
+          const li = document.createElement('li');
+          li.className = 'checklist-step-item';
+          
+          const chkId = `chk-${rec.key}-${sIdx}`;
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'checklist-checkbox';
+          checkbox.id = chkId;
+          checkbox.addEventListener('change', updateChecklistProgress);
+          
+          const label = document.createElement('label');
+          label.htmlFor = chkId;
+          label.className = 'checklist-label';
+          label.textContent = step;
+          
+          li.appendChild(checkbox);
+          li.appendChild(label);
+          ul.appendChild(li);
+        });
+        
+        section.appendChild(ul);
+        container.appendChild(section);
+      });
+
+      state.totalChecklistSteps = totalSteps;
+      updateChecklistProgress();
+    }
+
+    function updateChecklistProgress() {
+      const checked = document.querySelectorAll('.checklist-checkbox:checked').length;
+      const total = state.totalChecklistSteps || 0;
+      
+      const bar = document.getElementById('checklist-progress-bar');
+      const text = document.getElementById('checklist-progress-text');
+      const ariaBar = document.getElementById('checklist-progress-bar-aria');
+      
+      if (total > 0) {
+        const percent = Math.round((checked / total) * 100);
+        bar.style.width = percent + '%';
+        ariaBar.setAttribute('aria-valuenow', percent);
+        text.textContent = `${checked} of ${total} steps completed (${percent}%)`;
+      } else {
+        bar.style.width = '0%';
+        text.textContent = '0 steps (0%)';
+      }
+    }
+
+    /* ==========================================================================
+       SCREEN 5: FILTER COMPARE MATRIX
+       ========================================================================== */
+    function filterCompareTable(filter) {
+      document.querySelectorAll('.filter-chips .chip').forEach(chip => {
+        chip.classList.toggle('active', chip.id === `chip-${filter}`);
+      });
+
+      const rows = document.querySelectorAll('#compare-matrix-table tbody tr');
+      
+      rows.forEach(row => {
+        const sec = row.getAttribute('data-security');
+        const ease = row.getAttribute('data-ease');
+        const app = row.getAttribute('data-app');
+
+        let matches = false;
+        if (filter === 'all') {
+          matches = true;
+        } else if (filter === 'secure') {
+          matches = (sec === 'high');
+        } else if (filter === 'easy') {
+          matches = (ease === 'high');
+        } else if (filter === 'noapp') {
+          matches = (app === 'no');
+        }
+
+        row.style.display = matches ? '' : 'none';
+      });
+      
+      announceSR(`Filtered matrix table by: ${filter}`);
+    }
+
+    /* ==========================================================================
+       SCREEN 6: ACCOUNT TRACKER METHODS
+       ========================================================================== */
+    function toggleFormPasswordVisibility() {
+      const input = document.getElementById('acc-pass');
+      const btn = document.getElementById('acc-pass-toggle');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+
+    const weakPasswords = ['password123', '123456', 'qwerty', 'letmein', 'welcome', 'admin', 'password', '12345678', '12345'];
+
+    function checkPasswordStrengthLive() {
+      const pass = document.getElementById('acc-pass').value;
+      const meterBox = document.getElementById('strength-meter-box');
+      const bar = document.getElementById('strength-bar');
+      const text = document.getElementById('strength-text');
+
+      if (!pass) {
+        meterBox.style.display = 'none';
+        return;
+      }
+
+      meterBox.style.display = 'block';
+
+      // Check common list
+      if (weakPasswords.includes(pass.toLowerCase())) {
+        bar.style.width = '20%';
+        bar.style.backgroundColor = '#8C2D19';
+        text.textContent = 'Weak (Commonly used password)';
+        text.style.color = '#8C2D19';
+        return;
+      }
+
+      const length = pass.length;
+      
+      // Variety checks
+      let categories = 0;
+      if (/[a-z]/.test(pass)) categories++;
+      if (/[A-Z]/.test(pass)) categories++;
+      if (/[0-9]/.test(pass)) categories++;
+      if (/[^a-zA-Z0-9]/.test(pass)) categories++;
+
+      if (length < 8) {
+        bar.style.width = '25%';
+        bar.style.backgroundColor = '#8C2D19';
+        text.textContent = 'Weak (Too short - add more characters)';
+        text.style.color = '#8C2D19';
+      } else if (length >= 8 && categories < 2) {
+        bar.style.width = '40%';
+        bar.style.backgroundColor = '#8C2D19';
+        text.textContent = 'Weak (Mix in numbers or symbols)';
+        text.style.color = '#8C2D19';
+      } else if (length >= 8 && categories >= 2 && length < 12) {
+        bar.style.width = '65%';
+        bar.style.backgroundColor = '#8A6A2E';
+        text.textContent = 'Fair (Make it longer to build strength)';
+        text.style.color = '#8A6A2E';
+      } else {
+        bar.style.width = '100%';
+        bar.style.backgroundColor = '#2F6B4F';
+        text.textContent = 'Strong (Excellent length and variety)';
+        text.style.color = '#2F6B4F';
+      }
+    }
+
+    function addAccount(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('acc-name').value.trim();
+      const user = document.getElementById('acc-user').value.trim();
+      const method = document.getElementById('acc-method').value;
+      const pass = document.getElementById('acc-pass').value;
+      const notes = document.getElementById('acc-notes').value.trim();
+
+      const newAccount = {
+        id: Date.now(),
+        name: name,
+        username: user,
+        method: method,
+        password: pass,
+        notes: notes
+      };
+
+      state.accounts.push(newAccount);
+
+      // Reset form
+      document.getElementById('form-add-account').reset();
+      document.getElementById('strength-meter-box').style.display = 'none';
+      document.getElementById('acc-pass').type = 'password';
+      document.getElementById('acc-pass-toggle').textContent = 'Show';
+
+      renderAccountsList();
+      announceSR(`Successfully added account: ${name}`);
+    }
+
+    function removeAccount(id) {
+      state.accounts = state.accounts.filter(acc => acc.id !== id);
+      renderAccountsList();
+      announceSR("Removed account entry.");
+    }
+
+    function toggleRowPasswordVisibility(id) {
+      const passSpan = document.getElementById(`row-pass-${id}`);
+      const btn = document.getElementById(`row-btn-${id}`);
+      
+      const acc = state.accounts.find(a => a.id === id);
+      if (!acc) return;
+
+      const isMasked = passSpan.textContent.startsWith('•');
+      if (isMasked) {
+        passSpan.textContent = acc.password || '(None)';
+        btn.textContent = 'Hide';
+      } else {
+        passSpan.textContent = '••••••••';
+        btn.textContent = 'Show';
+      }
+    }
+
+    function renderAccountsList() {
+      const container = document.getElementById('saved-accounts-container');
+      container.innerHTML = '';
+
+      if (state.accounts.length === 0) {
+        container.innerHTML = `
+          <p style="font-style: italic; color: var(--text-muted); text-align: center; padding: 3rem; background: var(--bg-card); border: 1px dashed var(--border-color)">
+            No accounts registered yet. Use the form on the left to add one.
+          </p>
+        `;
+        return;
+      }
+
+      state.accounts.forEach(acc => {
+        // Safe DOM Creation
+        const card = document.createElement('div');
+        card.className = 'account-card';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'account-card-header';
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'account-card-name';
+        titleSpan.textContent = acc.name;
+
+        const badge = document.createElement('span');
+        badge.className = 'method-badge';
+        badge.textContent = acc.method;
+
+        header.appendChild(titleSpan);
+        header.appendChild(badge);
+
+        // Body
+        const body = document.createElement('div');
+        body.className = 'account-card-body';
+
+        // Username column
+        const uCol = document.createElement('div');
+        uCol.className = 'account-card-field';
+        const uLabel = document.createElement('span');
+        uLabel.className = 'field-label';
+        uLabel.textContent = 'Username';
+        const uVal = document.createElement('span');
+        uVal.className = 'field-val';
+        uVal.textContent = acc.username;
+        uCol.appendChild(uLabel);
+        uCol.appendChild(uVal);
+
+        // Password column
+        const pCol = document.createElement('div');
+        pCol.className = 'account-card-field';
+        const pLabel = document.createElement('span');
+        pLabel.className = 'field-label';
+        pLabel.textContent = 'Password';
+        const pVal = document.createElement('span');
+        pVal.className = 'field-val';
+        pVal.id = `row-pass-${acc.id}`;
+        pVal.textContent = acc.password ? '••••••••' : '(None)';
+        pCol.appendChild(pLabel);
+        pCol.appendChild(pVal);
+
+        body.appendChild(uCol);
+        body.appendChild(pCol);
+
+        // Notes row
+        let notesDiv = null;
+        if (acc.notes) {
+          notesDiv = document.createElement('div');
+          notesDiv.className = 'account-card-field';
+          notesDiv.style.gridColumn = 'span 2';
+          
+          const nLabel = document.createElement('span');
+          nLabel.className = 'field-label';
+          nLabel.textContent = 'Notes';
+          
+          const nVal = document.createElement('span');
+          nVal.style.fontSize = '0.9rem';
+          nVal.textContent = acc.notes;
+          
+          notesDiv.appendChild(nLabel);
+          notesDiv.appendChild(nVal);
+        }
+
+        // Footer
+        const footer = document.createElement('div');
+        footer.className = 'account-card-footer no-print';
+
+        const showBtn = document.createElement('button');
+        showBtn.type = 'button';
+        showBtn.className = 'btn btn-secondary';
+        showBtn.style.minHeight = '36px';
+        showBtn.style.padding = '0.25rem 0.75rem';
+        showBtn.id = `row-btn-${acc.id}`;
+        showBtn.textContent = 'Show';
+        showBtn.disabled = !acc.password;
+        showBtn.addEventListener('click', () => toggleRowPasswordVisibility(acc.id));
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn btn-danger';
+        removeBtn.style.minHeight = '36px';
+        removeBtn.style.padding = '0.25rem 0.75rem';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => removeAccount(acc.id));
+
+        footer.appendChild(showBtn);
+        footer.appendChild(removeBtn);
+
+        // Assemble
+        card.appendChild(header);
+        card.appendChild(body);
+        if (notesDiv) card.appendChild(notesDiv);
+        card.appendChild(footer);
+
+        container.appendChild(card);
+      });
+    }
+
+    /* ==========================================================================
+       SCREEN 8: SCAM TEXT CHECKER & OCR
+       ========================================================================== */
+    const scamRegexPatterns = {
+      urgency: /\b(urgently|act now|immediate|right away|within \d+ (hours|minutes)|critical action|hurry|final notice)\b/i,
+      giftcard: /\b(gift card|steam card|itunes card|google play card|wire transfer|western union|moneygram|bitcoin|cryptocurrency|crypto)\b/i,
+      secrecy: /\b(don't tell|keep this secret|do not disclose|shhh|confidential|do not share with anyone|under the table)\b/i,
+      greeting: /\b(dear customer|dear user|valued customer|sir\/madam)\b/i,
+      verify: /\b(verify your (account|pin|ssn|social security|password|identity)|confirm your pin|ssn verification)\b/i,
+      suspension: /\b(suspended|deactivated|frozen|terminate|cancel your account|arrest|police|jail|sheriff|legal action)\b/i,
+      link: /\b(click here|click link|login to|reset-link|bit\.ly|tinyurl)\b/i,
+      prize: /\b(winner|won|lottery|prize|claim your|selected to receive|free gift|reward)\b/i,
+      emergency: /\b(grandma|grandpa|in jail|car accident|hospital|need bail|secret emergency|your grandson)\b/i,
+      gov: /\b(irs|ssn|social security administration|fbi|dhs|tax refund|audit notice)\b/i
+    };
+
+    const scamFlagDescriptions = {
+      urgency: "Pressure to act quickly without thinking",
+      giftcard: "Requests for untraceable payment (gift cards, wire transfers, crypto)",
+      secrecy: "Instructions to keep the interaction secret from family or officials",
+      greeting: "Vague, generic greeting instead of your name",
+      verify: "Requests to confirm critical secrets (PINs, Passwords, SSN)",
+      suspension: "Immediate threats of legal arrest or frozen banking access",
+      link: "High pressure to click short links or verify credentials online",
+      prize: "Claims of unsolicited winnings requiring processing fees",
+      emergency: "Family member impersonation claiming immediate distress",
+      gov: "High pressure claims representing official tax or audit groups"
+    };
+
+    function clearScamChecker() {
+      document.getElementById('scam-text-input').value = '';
+      document.getElementById('scam-verdict-box').style.display = 'none';
+      document.getElementById('screenshot-preview').style.display = 'none';
+      document.getElementById('ocr-prompt-text').style.display = 'block';
+      document.getElementById('scam-file-input').value = '';
+    }
+
+    function scanScamText(e) {
+      if (e) e.preventDefault();
+      
+      const text = document.getElementById('scam-text-input').value.trim();
+      const verdictBox = document.getElementById('scam-verdict-box');
+      const title = document.getElementById('scam-verdict-title');
+      const desc = document.getElementById('scam-verdict-desc');
+      const listContainer = document.getElementById('scam-flags-list');
+
+      if (!text) {
+        verdictBox.style.display = 'none';
+        return;
+      }
+
+      verdictBox.className = 'verdict-box';
+      listContainer.innerHTML = '';
+
+      let matchedFlags = [];
+      for (let flag in scamRegexPatterns) {
+        if (scamRegexPatterns[flag].test(text)) {
+          matchedFlags.push(scamFlagDescriptions[flag]);
+        }
+      }
+
+      const flagCount = matchedFlags.length;
+      verdictBox.style.display = 'block';
+
+      if (flagCount === 0) {
+        verdictBox.classList.add('verdict-safe');
+        title.textContent = "Verdict: No Obvious Scam Patterns Found";
+        desc.textContent = "We found no common scam keywords in this message. However, scammers frequently modify their wording. If you are in doubt, do not respond and check with a trusted family member.";
+      } else if (flagCount <= 2) {
+        verdictBox.classList.add('verdict-warning');
+        title.textContent = "Verdict: Caution Recommended (Some Flags Found)";
+        desc.textContent = "This message contains indicators commonly seen in spam and scam campaigns. Proceed with extreme caution.";
+        
+        const header = document.createElement('strong');
+        header.textContent = "Identified Indicators:";
+        listContainer.appendChild(header);
+        
+        const ul = document.createElement('ul');
+        ul.style.paddingLeft = '1.5rem';
+        ul.style.marginTop = '0.5rem';
+        matchedFlags.forEach(f => {
+          const li = document.createElement('li');
+          li.textContent = f;
+          ul.appendChild(li);
+        });
+        listContainer.appendChild(ul);
+      } else {
+        verdictBox.classList.add('verdict-danger');
+        title.textContent = "Verdict: High Scam Threat Detected!";
+        desc.textContent = "WARNING: This message matches multiple verified scam configurations. Do not reply, call the numbers listed, or click any links.";
+        
+        const header = document.createElement('strong');
+        header.textContent = "Critical Danger Indicators Found:";
+        listContainer.appendChild(header);
+        
+        const ul = document.createElement('ul');
+        ul.style.paddingLeft = '1.5rem';
+        ul.style.marginTop = '0.5rem';
+        matchedFlags.forEach(f => {
+          const li = document.createElement('li');
+          li.textContent = f;
+          ul.appendChild(li);
+        });
+        listContainer.appendChild(ul);
+      }
+
+      verdictBox.focus();
+      announceSR(`Scam scan complete: Found ${flagCount} flags.`);
+    }
+
+    // Handles OCR screenshot conversions
+    function handleScreenshotUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const promptText = document.getElementById('ocr-prompt-text');
+      const imgPreview = document.getElementById('screenshot-preview');
+      const loader = document.getElementById('ocr-loading-indicator');
+      const textarea = document.getElementById('scam-text-input');
+
+      // Load thumbnail preview
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        imgPreview.src = evt.target.result;
+        imgPreview.style.display = 'block';
+        promptText.style.display = 'none';
+
+        // Trigger OCR
+        loader.style.display = 'flex';
+        announceSR("Starting image OCR scanning...");
+
+        if (typeof Tesseract === 'undefined') {
+          // If network failed to load Tesseract CDN
+          loader.style.display = 'none';
+          alert("The OCR library is not loaded. Please ensure you have an active internet connection to scan images, or manually type the text instead.");
+          return;
+        }
+
+        Tesseract.recognize(
+          evt.target.result,
+          'eng'
+        ).then(({ data: { text } }) => {
+          loader.style.display = 'none';
+          if (text && text.trim()) {
+            textarea.value = text;
+            scanScamText();
+            announceSR("Image text extracted successfully.");
+          } else {
+            announceSR("OCR search completed, but no text was found.");
+            alert("We couldn't extract readable text from this screenshot. Please try typing the message manually into the text area instead.");
+          }
+        }).catch(err => {
+          loader.style.display = 'none';
+          console.error(err);
+          announceSR("OCR process failed.");
+          alert("OCR extraction failed. Please type the message details directly.");
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* ==========================================================================
+       SCREEN 9: CAPTCHA PRACTICE ENGINE
+       ========================================================================== */
+    const captchaShapes = ['circle', 'square', 'star', 'triangle', 'heart', 'diamond'];
+    
+    // Path vectors for SVG shapes
+    const shapeSvgs = {
+      circle: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /></svg>',
+      square: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" /></svg>',
+      star: '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" /></svg>',
+      triangle: '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,3 2,21 22,21" /></svg>',
+      heart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.28 2,8.5C2,5.42 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.09C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.42 22,8.5C22,12.28 18.6,15.36 13.45,20.03L12,21.35Z" /></svg>',
+      diamond: '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 22,12 12,22 2,12" /></svg>'
+    };
+
+    let captchaState = {
+      targetShape: '',
+      gridLayout: [] // Array of {shape, index, isSelected}
+    };
+
+    function generateNewCaptcha() {
+      const container = document.getElementById('captcha-grid-container');
+      const instruction = document.getElementById('captcha-instruction');
+      const feedback = document.getElementById('captcha-feedback-msg');
+
+      container.innerHTML = '';
+      feedback.style.display = 'none';
+
+      // Pick target shape
+      const targetIdx = Math.floor(Math.random() * captchaShapes.length);
+      const target = captchaShapes[targetIdx];
+      captchaState.targetShape = target;
+      
+      instruction.textContent = `Select all the squares showing a ${target}`;
+
+      // Build grid layout
+      captchaState.gridLayout = [];
+      
+      // Determine how many targets (2 to 4)
+      const targetCount = Math.floor(Math.random() * 3) + 2; // 2, 3 or 4
+      
+      // Select random positions for targets
+      let targetPositions = new Set();
+      while (targetPositions.size < targetCount) {
+        targetPositions.add(Math.floor(Math.random() * 9));
+      }
+
+      for (let i = 0; i < 9; i++) {
+        let shapeName = '';
+        if (targetPositions.has(i)) {
+          shapeName = target;
+        } else {
+          // Fill with other random shapes
+          let choices = captchaShapes.filter(s => s !== target);
+          shapeName = choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        captchaState.gridLayout.push({
+          shape: shapeName,
+          index: i,
+          isSelected: false
+        });
+
+        // Create DOM element
+        const tile = document.createElement('button');
+        tile.type = 'button';
+        tile.className = 'captcha-tile';
+        tile.id = `captcha-tile-${i}`;
+        tile.setAttribute('aria-label', `Tile ${i + 1}`);
+        tile.setAttribute('aria-pressed', 'false');
+        tile.innerHTML = shapeSvgs[shapeName];
+        
+        tile.addEventListener('click', () => toggleCaptchaTileSelection(i));
+        
+        container.appendChild(tile);
+      }
+
+      announceSR(`New captcha grid generated. Target shape is: ${target}.`);
+    }
+
+    function toggleCaptchaTileSelection(idx) {
+      const tile = document.getElementById(`captcha-tile-${idx}`);
+      const isSel = !captchaState.gridLayout[idx].isSelected;
+      
+      captchaState.gridLayout[idx].isSelected = isSel;
+      
+      tile.classList.toggle('selected', isSel);
+      tile.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+    }
+
+    function checkCaptchaAnswer() {
+      const grid = captchaState.gridLayout;
+      const target = captchaState.targetShape;
+      const feedback = document.getElementById('captcha-feedback-msg');
+
+      let correctCount = 0;
+      let missedCount = 0;
+      let extraCount = 0;
+
+      grid.forEach(cell => {
+        const isTarget = (cell.shape === target);
+        if (isTarget && cell.isSelected) {
+          correctCount++;
+        } else if (isTarget && !cell.isSelected) {
+          missedCount++;
+        } else if (!isTarget && cell.isSelected) {
+          extraCount++;
+        }
+      });
+
+      feedback.style.display = 'block';
+      feedback.className = 'captcha-feedback';
+
+      if (missedCount === 0 && extraCount === 0) {
+        feedback.style.backgroundColor = '#D1E7DD';
+        feedback.style.borderColor = '#BADBCC';
+        feedback.style.color = '#0F5132';
+        feedback.textContent = `Excellent! You successfully identified all ${correctCount} ${target} shapes. No mistakes.`;
+      } else {
+        feedback.style.backgroundColor = '#FFF3CD';
+        feedback.style.borderColor = '#FFE69C';
+        feedback.style.color = '#664D03';
+        feedback.textContent = `Feedback: Found ${correctCount} correct tiles. You missed ${missedCount} target shapes and selected ${extraCount} wrong shapes. No penalties — try clicking them again!`;
+      }
+      
+      feedback.focus();
+      announceSR(feedback.textContent);
+    }
+
+    // Auto load verification on startup
+    document.addEventListener('DOMContentLoaded', () => {
+      generateNewCaptcha();
+      renderAccountsList();
+    });
+  </script>
+</body>
+</html>
